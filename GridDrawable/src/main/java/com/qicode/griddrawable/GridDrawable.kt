@@ -87,7 +87,7 @@ class GridDrawable constructor(row: Int = 3, col: Int = 4, dividerSize: Int? = 1
                     left = (j + 1) * dividerSize + j * itemWidth
                     top = (i + 1) * dividerSize + i * itemHeight
                     right = left + itemWidth
-                    bottom = top + itemWidth
+                    bottom = top + itemHeight
                 }
                 canvas.drawRoundRect(rect, radius, radius, paint)
             }
