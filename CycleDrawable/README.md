@@ -1,5 +1,5 @@
 ![Travis (.com)](https://img.shields.io/travis/com/o0starshine0o/Travel)
-![Maven Central](https://img.shields.io/maven-central/v/com.github.qicodes/GridDrawable)
+![Maven Central](https://img.shields.io/maven-central/v/com.github.qicodes/CycleDrawable)
 ![GitHub](https://img.shields.io/github/license/o0starshine0o/Travel)
 ![GitHub last commit](https://img.shields.io/github/last-commit/o0starshine0o/Travel)
 
