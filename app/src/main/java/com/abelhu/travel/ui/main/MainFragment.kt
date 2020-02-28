@@ -12,7 +12,6 @@ import com.abelhu.travel.ui.empty.EmptyActivity
 import com.qicode.cycle.CycleBitmap
 import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.dp
-import com.qicode.grid.GridDrawable
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
 
@@ -25,8 +24,8 @@ class MainFragment : Fragment() {
             val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), near.bitmap.height.toFloat(), 8.dp)
             travelContainer.background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
             travelContainer.post { (travelContainer.background as CycleDrawable).start() }
-            // 工具容器添加占位背景
-            toolsContainer.post { toolsContainer.background = GridDrawable() }
+            // 工具容器添加adapter
+            toolsContainer.adapter = MainAdapter()
             // 临时添加监听事件
             speedup.setOnClickListener { startActivity(Intent(context, EmptyActivity::class.java)) }
         }

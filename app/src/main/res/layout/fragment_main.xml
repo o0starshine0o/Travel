@@ -24,6 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/mergeGuide" />
 
+    <!--  调节GuideLine的百分比，可以调节合成区和旅行区的大小  -->
     <android.support.constraint.Guideline
         android:id="@+id/mergeGuide"
         android:layout_width="0dp"
@@ -44,8 +45,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mergeGuide">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/toolsContainer"
+        <View
+            android:id="@+id/placeholder"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/functionContainer"
@@ -97,5 +98,15 @@
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
+
+    <com.qicode.grid.GridDragLayout
+        android:id="@+id/toolsContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:gridView="@id/placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
