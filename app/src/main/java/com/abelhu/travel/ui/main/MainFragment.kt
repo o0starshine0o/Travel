@@ -12,7 +12,7 @@ import com.abelhu.travel.ui.empty.EmptyActivity
 import com.qicode.cycle.CycleBitmap
 import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.dp
-import com.qicode.griddrawable.GridDrawable
+import com.qicode.grid.GridDrawable
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
 

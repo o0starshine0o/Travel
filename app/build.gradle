@@ -38,7 +38,7 @@ dependencies {
     // 工具类
     implementation 'com.github.qicodes:utils:1.2.7'
     // 绘制背景九宫格
-    implementation project(path: ':GridDrawable')
+    implementation project(path: ':GridView')
     // 无限循环滚动的Drawable
     implementation project(path: ':CycleDrawable')
 }

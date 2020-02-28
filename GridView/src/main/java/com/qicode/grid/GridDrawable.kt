@@ -1,4 +1,4 @@
-package com.qicode.griddrawable
+package com.qicode.grid
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
