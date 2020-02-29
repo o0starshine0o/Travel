@@ -10,7 +10,7 @@ import com.qicode.grid.GridHolder
 import kotlinx.android.synthetic.main.item_tool.view.*
 
 class MainAdapter : GridAdapter<MainAdapter.ToolHolder>() {
-    private val list = MutableList(3) { i -> ToolBean(i / 2, i % 2, i) }
+    private val list = MutableList(3) { i -> ToolBean(i / 2, i % 2, i, 0) }
 
     override fun getItemCount() = list.size
 

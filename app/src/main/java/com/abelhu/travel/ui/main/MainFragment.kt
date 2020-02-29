@@ -50,13 +50,16 @@ class MainFragment : Fragment() {
                     toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
                 }
                 toolsContainer.setOnDragListener { _, event ->
-                    when (event.action) {
-                        DragEvent.ACTION_DROP -> {
-                            val index = event.clipData.getItemAt(0).text.toString().toInt()
-                            (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(event.x, event.y)?.apply {
-                                Log.i(this@MainFragment.TAG(), "item $index drop row-col is [${this[0]}, ${this[1]}]")
-                            }
-                            Log.i(this@MainFragment.TAG(), "ACTION_DROP")
+                    // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
+                    if (event.action == DragEvent.ACTION_DROP) {
+                        Log.i(this@MainFragment.TAG(), "ACTION_DROP")
+                        // 根据保存的数据，获取原始的index
+                        val origin = event.clipData.getItemAt(0).text.toString().toInt()
+                        // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
+                        (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(event.x, event.y)?.apply {
+                            // 根据目标的row-col，再进行下一步操作
+                            (toolsContainer.adapter as? ToolsAdapter)?.changeTools(origin, this[0], this[1])
+                            Log.i(this@MainFragment.TAG(), "item $origin drop row-col is [${this[0]}, ${this[1]}]")
                         }
                     }
                     true
