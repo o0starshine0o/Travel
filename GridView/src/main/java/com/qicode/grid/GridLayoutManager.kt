@@ -79,6 +79,20 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
         }
     }
 
+    fun getRowCol(x: Float, y: Float): IntArray? {
+        for (i in position.indices) {
+            for (j in position[i].indices) {
+                if (RectF().apply {
+                        left = position[i][j][0]
+                        top = position[i][j][1]
+                        right = left + itemWidth
+                        bottom = top + itemHeight
+                    }.contains(x, y)) return intArrayOf(i, j)
+            }
+        }
+        return null
+    }
+
     class LayoutParams(width: Int, height: Int) : RecyclerView.LayoutParams(width, height) {
         var row = 0
         var col = 0

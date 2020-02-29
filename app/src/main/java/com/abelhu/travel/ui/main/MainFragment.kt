@@ -49,14 +49,15 @@ class MainFragment : Fragment() {
                     // 再layoutManager完成item的计算后，设置toolsContainer的背景
                     toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
                 }
-                toolsContainer.setOnDragListener { view, event ->
+                toolsContainer.setOnDragListener { _, event ->
                     when (event.action) {
-                        DragEvent.ACTION_DRAG_STARTED -> Log.i(this@MainFragment.TAG(), "ACTION_DRAG_STARTED")
-                        DragEvent.ACTION_DRAG_ENDED -> Log.i(this@MainFragment.TAG(), "ACTION_DRAG_ENDED")
-                        DragEvent.ACTION_DRAG_ENTERED -> Log.i(this@MainFragment.TAG(), "ACTION_DRAG_ENTERED")
-                        DragEvent.ACTION_DRAG_EXITED -> Log.i(this@MainFragment.TAG(), "ACTION_DRAG_EXITED")
-                        DragEvent.ACTION_DRAG_LOCATION -> Log.i(this@MainFragment.TAG(), "ACTION_DRAG_LOCATION:[${event.x}, ${event.y}]")
-                        DragEvent.ACTION_DROP -> Log.i(this@MainFragment.TAG(), "ACTION_DROP")
+                        DragEvent.ACTION_DROP -> {
+                            val index = event.clipData.getItemAt(0).text.toString().toInt()
+                            (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(event.x, event.y)?.apply {
+                                Log.i(this@MainFragment.TAG(), "item $index drop row-col is [${this[0]}, ${this[1]}]")
+                            }
+                            Log.i(this@MainFragment.TAG(), "ACTION_DROP")
+                        }
                     }
                     true
                 }

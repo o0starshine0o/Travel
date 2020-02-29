@@ -25,13 +25,11 @@ class ToolsAdapter : RecyclerView.Adapter<ToolsAdapter.ToolsHolder>() {
         ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false))
 
     override fun onBindViewHolder(holder: ToolsHolder, position: Int) {
-        holder.onBind(list[position])
+        holder.onBind(list[position], position)
     }
 
     class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        private var moveX = 0f
-        private var moveY = 0f
-        fun onBind(bean: ToolBean): ToolsHolder {
+        fun onBind(bean: ToolBean, position: Int): ToolsHolder {
             // 根据保存的数据，设置item的位置
             (view.layoutParams as GridLayoutManager.LayoutParams).apply {
                 row = bean.row
@@ -42,15 +40,11 @@ class ToolsAdapter : RecyclerView.Adapter<ToolsAdapter.ToolsHolder>() {
             // 设置drag
             view.setOnTouchListener { view, event ->
                 when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {// 创建DragShadowBuilder，我把控件本身传进去
-                        event.y
-                        view.top
+                    MotionEvent.ACTION_DOWN -> {
                         // 创建DragShadowBuilder，我把控件本身传进去
                         val builder = DragBuilder(view, event.x, event.y)
                         // 剪切板数据，可以在DragEvent.ACTION_DROP方法的时候获取。
-                        // 剪切板数据，可以在DragEvent.ACTION_DROP方法的时候获取。
-                        val data = ClipData.newPlainText("Label", "我是文本内容！")
-                        // 开始拖拽
+                        val data = ClipData.newPlainText("position", position.toString())
                         // 开始拖拽
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             view.startDragAndDrop(data, builder, view, DRAG_FLAG_OPAQUE)
