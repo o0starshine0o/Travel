@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark">
@@ -99,14 +100,29 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.qicode.grid.GridDragLayout
+    <!--    <com.qicode.grid.GridDragLayout-->
+    <!--        android:id="@+id/toolsContainer"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        app:gridView="@id/placeholder"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        android:visibility="invisible"/>-->
+
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/toolsContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:gridView="@id/placeholder"
+        app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:spanCount="4"
+        tools:itemCount="100"
+        tools:listitem="@layout/item_tool"
+        tools:visibility="invisible" />
 
 </android.support.constraint.ConstraintLayout>
