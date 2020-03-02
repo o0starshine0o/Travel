@@ -1,6 +1,7 @@
 package com.qicode.grid
 
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.RectF
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
@@ -23,18 +24,39 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
         // 其他约定，比如更换工具
         val APPLY = intArrayOf(-100, -100)
     }
+
+    var applyRect = Rect()
     /**
      * 使用二维数组保存绘制位置的左上角信息(top,left)，相对于本控件而言
      */
-    var position = Array(row) { Array(col) { floatArrayOf(0f, 0f) } }
+    private var position = Array(row) { Array(col) { floatArrayOf(0f, 0f) } }
     /**
      * item的宽度
      */
-    var itemWidth = 0f
+    private var itemWidth = 0f
     /**
      * item的高度
      */
-    var itemHeight = 0f
+    private var itemHeight = 0f
+
+    fun getRowCol(x: Float, y: Float, result: (row: Int, col: Int) -> Unit) {
+        applyRect.apply { if (contains(x.toInt(), y.toInt())) return result.invoke(APPLY[0], APPLY[1]) }
+        for (i in position.indices) {
+            for (j in position[i].indices) {
+                if (RectF().apply {
+                        left = position[i][j][0]
+                        top = position[i][j][1]
+                        right = left + itemWidth
+                        bottom = top + itemHeight
+                    }.contains(x, y)) {
+                    result.invoke(i, j)
+                    return
+                }
+            }
+        }
+        // TODO，添加删除的操作
+        return result.invoke(APPLY[0], APPLY[1])
+    }
 
     override fun generateDefaultLayoutParams() = LayoutParams(itemWidth.toInt(), itemHeight.toInt())
     override fun generateLayoutParams(lp: ViewGroup.LayoutParams?) = LayoutParams(itemWidth.toInt(), itemHeight.toInt())
@@ -81,30 +103,12 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
     private fun getAvailableRect(view: View): RectF? {
         val params = view.layoutParams as LayoutParams
         // 非法参数，直接返回
-        if (params.row >= position.size || params.col >= position[params.row].size) return null
+        if (params.row < 0 || params.col < 0 || params.row >= position.size || params.col >= position[params.row].size) return null
         // 获取行列对应的位置坐标
         val leftTop = position[params.row][params.col]
         return RectF(leftTop[0], leftTop[1], leftTop[0] + itemWidth, leftTop[1] + itemHeight).apply {
             Log.i(this@GridLayoutManager.TAG(), "available rect for view[${params.row}, ${params.col}]:[$left, $top, $right, $bottom]")
         }
-    }
-
-    fun getRowCol(x: Float, y: Float, result: (row: Int, col: Int) -> Unit) {
-        for (i in position.indices) {
-            for (j in position[i].indices) {
-                if (RectF().apply {
-                        left = position[i][j][0]
-                        top = position[i][j][1]
-                        right = left + itemWidth
-                        bottom = top + itemHeight
-                    }.contains(x, y)) {
-                    result.invoke(i, j)
-                    return
-                }
-            }
-        }
-        // TODO，添加删除的操作
-        return result.invoke(APPLY[0], APPLY[1])
     }
 
     class LayoutParams(width: Int, height: Int) : RecyclerView.LayoutParams(width, height) {

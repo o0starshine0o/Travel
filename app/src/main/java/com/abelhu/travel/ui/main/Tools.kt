@@ -33,18 +33,20 @@ class Tools(private val listener: ToolsOperateListener) {
         if (index >= list.size || index < 0) return
         val origin = list[index]
         // 判断是否是约定的特殊位置
-        when (intArrayOf(row, col)) {
+        when {
             // 取消对tool的操作
-            GridLayoutManager.CANCEL -> listener.onToolsCancel(index, origin)
+            intArrayOf(row, col).contentEquals(GridLayoutManager.CANCEL) -> listener.onToolsCancel(index, origin)
             // 删除这个tool
-            GridLayoutManager.DELETE -> listener.onToolsDelete(index, origin.apply { list.remove(this) })
+            intArrayOf(row, col).contentEquals(GridLayoutManager.DELETE) -> listener.onToolsDelete(index, origin.apply { list.remove(this) })
             // 将这个tool应用到某个地方
-            GridLayoutManager.APPLY -> listener.onToolsApply(index, origin)
+            intArrayOf(row, col).contentEquals(GridLayoutManager.APPLY) -> listener.onToolsApply(index, origin)
             else -> {
                 val target = getTool(row, col)
                 when {
                     // 移动tool
                     target == null -> listener.onToolsMove(index, moveTool(origin, row, col))
+                    // 在原地
+                    target == origin -> listener.onToolsCancel(index, origin)
                     // 合并tool
                     target.level == origin.level -> listener.onToolsMerge(mergeTool(origin, target))
                     // 交换两个tool

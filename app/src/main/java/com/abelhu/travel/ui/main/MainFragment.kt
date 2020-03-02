@@ -42,6 +42,12 @@ class MainFragment : Fragment(), ToolsOperateListener {
             quick.setOnClickListener { tools.addTool() }
             // 临时添加监听事件
             speedup.setOnClickListener { startActivity(Intent(context, EmptyActivity::class.java)) }
+            // 设置拖拽监听
+            setOnDragListener { _, event ->
+                // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
+                if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
+                true
+            }
         }
     }
 
@@ -49,21 +55,34 @@ class MainFragment : Fragment(), ToolsOperateListener {
         toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
             // 再layoutManager完成item的计算后，设置toolsContainer的背景
             toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
+        }.apply {
+            // 设置apply的区域，以toolsContainer的左上角为原点
+            val toolsPosition = intArrayOf(0, 0)
+            toolsContainer.getLocationInWindow(toolsPosition)
+            travel.getGlobalVisibleRect(applyRect)
+            applyRect.apply {
+                left -= toolsPosition[0]
+                right -= toolsPosition[0]
+                top -= toolsPosition[1]
+                bottom -= toolsPosition[1]
+            }
         }
         toolsContainer.adapter = ToolsAdapter(tools)
-        toolsContainer.setOnDragListener { _, event ->
-            // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
-            if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
-            true
-        }
     }
 
     private fun onToolsDrop(event: DragEvent) {
         Log.i(TAG(), "ACTION_DROP")
+        // 获取在控件内的坐标信息
+        val toolsPosition = intArrayOf(0, 0)
+        toolsContainer.getLocationInWindow(toolsPosition)
+        val dragPosition = intArrayOf(0, 0)
+        view?.getLocationInWindow(dragPosition)
+        val x = event.x + dragPosition[0] - toolsPosition[0]
+        val y = event.y + dragPosition[1] - toolsPosition[1]
         // 根据保存的数据，获取原始的index
         val index = event.clipData.getItemAt(0).text.toString().toInt()
         // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
-        (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(event.x, event.y) { i, j ->
+        (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
             Log.i(this@MainFragment.TAG(), "item $index drop row-col is [$i, $j]")
             // 根据目标的row-col，再进行下一步操作
             tools.operateTool(index, i, j)
@@ -92,6 +111,9 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsApply")
+        travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
+        travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
+        travel.playAnimation()
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
