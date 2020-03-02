@@ -13,6 +13,17 @@ import kotlin.math.min
 typealias GridLayoutListener = (position: Array<Array<FloatArray>>, itemWidth: Float, itemHeight: Float) -> Unit
 
 class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, private val listener: GridLayoutListener? = null) : RecyclerView.LayoutManager() {
+
+    companion object {
+        // 约定（-1， -1）表示增加tool
+        val ADD = intArrayOf(-1, -1)
+        // 约定（-2， -2）表示删除tool
+        val DELETE = intArrayOf(-2, -2)
+        // 约定（-3， -3）表示取消tool的操作
+        val CANCEL = intArrayOf(-3, -3)
+        // 其他约定，比如更换工具
+        val APPLY = intArrayOf(-100, -100)
+    }
     /**
      * 使用二维数组保存绘制位置的左上角信息(top,left)，相对于本控件而言
      */
@@ -79,7 +90,7 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
         }
     }
 
-    fun getRowCol(x: Float, y: Float): IntArray {
+    fun getRowCol(x: Float, y: Float, result: (row: Int, col: Int) -> Unit) {
         for (i in position.indices) {
             for (j in position[i].indices) {
                 if (RectF().apply {
@@ -87,10 +98,14 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
                         top = position[i][j][1]
                         right = left + itemWidth
                         bottom = top + itemHeight
-                    }.contains(x, y)) return intArrayOf(i, j)
+                    }.contains(x, y)) {
+                    result.invoke(i, j)
+                    return
+                }
             }
         }
-        return intArrayOf(-1, -1)
+        // TODO，添加删除的操作
+        return result.invoke(APPLY[0], APPLY[1])
     }
 
     class LayoutParams(width: Int, height: Int) : RecyclerView.LayoutParams(width, height) {
