@@ -8,6 +8,5 @@ import java.io.Serializable
 data class ToolBean(
     var row: Int,
     var col: Int,
-    var text: Int,
     var level: Int
 ) : Serializable

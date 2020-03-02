@@ -9,14 +9,14 @@ class Tools(private val listener: ToolsOperateListener) {
     /**
      * 保存所有的工具
      */
-    val list = MutableList(30) { i -> ToolBean(i / 2, i % 2, i, 1) }
+    val list = MutableList(30) { i -> ToolBean(i / 2, i % 2, 1) }
 
     /**
      * 添加一个tool
      */
     fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
         Log.i(TAG(), "add tool")
-        val newTool = tool ?: ToolBean(0, 0, 99, 0)
+        val newTool = tool ?: ToolBean(0, 0, 1)
         for (i in 0 until rowMax) {
             for (j in 0 until colMax) {
                 if (getTool(i, j) == null) return listener.onToolsAdd(list.size + 1, newTool.apply { row = i;col = j }.also { list.add(it) })

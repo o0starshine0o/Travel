@@ -1,6 +1,7 @@
 package com.abelhu.travel.ui.main
 
 import android.content.ClipData
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -33,7 +34,8 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
                 col = bean.col
             }
             // 设置文本
-            view.text.text = bean.text.toString()
+            val fileName = "lottie/dog/ic_dog_level${bean.level}.png"
+            view.image.setImageDrawable(Drawable.createFromStream(view.context.assets.open(fileName), null))
             view.level.text = bean.level.toString()
             // 设置view可见
             view.visibility = View.VISIBLE
