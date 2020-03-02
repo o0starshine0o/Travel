@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.DragEvent
 import android.view.LayoutInflater
@@ -36,28 +37,20 @@ class MainFragment : Fragment(), ToolsOperateListener {
             travelContainer.background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
             travelContainer.post { (travelContainer.background as CycleDrawable).start() }
             // 当占位控件得到位置信息后再设置toolsContainer
-            placeholder.post { initToolsContainer() }
+            toolsContainer.post { initToolsContainer(toolsContainer) }
+            // 快速购买
+            quick.setOnClickListener { tools.addTool() }
             // 临时添加监听事件
             speedup.setOnClickListener { startActivity(Intent(context, EmptyActivity::class.java)) }
         }
     }
 
-    private fun initToolsContainer() {
-        // 拿到位置信息
-        val holderLeftTop = intArrayOf(0, 0)
-        placeholder.getLocationInWindow(holderLeftTop)
-        val toolsLeftTop = intArrayOf(0, 0)
-        toolsContainer.getLocationInWindow(toolsLeftTop)
-        // 计算padding
-        val right = toolsContainer.width - placeholder.width - holderLeftTop[0]
-        val bottom = toolsContainer.height - placeholder.height - holderLeftTop[1] + toolsLeftTop[1]
-        // 设置padding，adapter，layoutManager
-        toolsContainer.setPadding(holderLeftTop[0] - toolsLeftTop[0], holderLeftTop[1] - toolsLeftTop[1], right, bottom)
-        toolsContainer.adapter = ToolsAdapter(tools)
+    private fun initToolsContainer(toolsContainer: RecyclerView) {
         toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
             // 再layoutManager完成item的计算后，设置toolsContainer的背景
             toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
         }
+        toolsContainer.adapter = ToolsAdapter(tools)
         toolsContainer.setOnDragListener { _, event ->
             // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
             if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
@@ -83,7 +76,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
     }
 
     override fun onToolsAdd(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsAdd")
+        Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
         toolsContainer.adapter.notifyItemInserted(index)
     }
 

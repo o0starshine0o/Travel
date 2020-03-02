@@ -1,6 +1,8 @@
 package com.abelhu.travel.ui.main
 
+import android.util.Log
 import com.abelhu.travel.data.ToolBean
+import com.qicode.extension.TAG
 import com.qicode.grid.GridLayoutManager
 
 class Tools(private val listener: ToolsOperateListener) {
@@ -12,13 +14,15 @@ class Tools(private val listener: ToolsOperateListener) {
     /**
      * 添加一个tool
      */
-    fun addTool(tool: ToolBean, row: Int = 3, col: Int = 4) {
-        for (i in 0 until row) {
-            for (j in 0 until col) {
-                if (getTool(i, j) == null) return listener.onToolsAdd(list.size, tool.also { list.add(it) })
+    fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
+        Log.i(TAG(), "add tool")
+        val newTool = tool ?: ToolBean(0, 0, 99, 0)
+        for (i in 0 until rowMax) {
+            for (j in 0 until colMax) {
+                if (getTool(i, j) == null) return listener.onToolsAdd(list.size + 1, newTool.apply { row = i;col = j }.also { list.add(it) })
             }
         }
-        listener.onToolsAddError(tool, Exception("no empty position for tool to put"))
+        listener.onToolsAddError(newTool, Exception("no empty position for tool to put"))
     }
 
     /**

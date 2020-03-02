@@ -46,14 +46,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mergeGuide">
 
-        <View
-            android:id="@+id/placeholder"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/toolsContainer"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/functionContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:spanCount="4"
+            tools:itemCount="100"
+            tools:listitem="@layout/item_tool" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/functionContainer"
@@ -99,19 +103,5 @@
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/toolsContainer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:spanCount="4"
-        tools:itemCount="100"
-        tools:listitem="@layout/item_tool"
-        tools:visibility="invisible" />
 
 </android.support.constraint.ConstraintLayout>

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.qicode.extension.TAG
-import kotlin.math.min
 
 typealias GridLayoutListener = (position: Array<Array<FloatArray>>, itemWidth: Float, itemHeight: Float) -> Unit
 
@@ -64,7 +63,7 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
         // 缓存所有view
         detachAndScrapAttachedViews(recycler)
         // 遍历所有item
-        for (i in 0 until min(itemCount, row * col)) {
+        for (i in 0 until itemCount) {
             // 获取本次的childView
             val childView = recycler.getViewForPosition(i)
             // 获取并设置childView放置区域
