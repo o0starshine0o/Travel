@@ -100,17 +100,6 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <!--    <com.qicode.grid.GridDragLayout-->
-    <!--        android:id="@+id/toolsContainer"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        app:gridView="@id/placeholder"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        android:visibility="invisible"/>-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/toolsContainer"
         android:layout_width="0dp"

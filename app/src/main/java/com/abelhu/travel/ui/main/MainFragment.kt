@@ -30,8 +30,6 @@ class MainFragment : Fragment() {
             val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), near.bitmap.height.toFloat(), 8.dp)
             travelContainer.background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
             travelContainer.post { (travelContainer.background as CycleDrawable).start() }
-            // 工具容器添加adapter
-//            toolsContainer.adapter = MainAdapter()
             // 当占位控件得到位置信息后再设置toolsContainer
             placeholder.post {
                 // 拿到位置信息

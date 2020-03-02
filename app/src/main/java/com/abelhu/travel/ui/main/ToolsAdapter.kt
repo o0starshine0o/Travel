@@ -10,7 +10,7 @@ import android.view.View.DRAG_FLAG_OPAQUE
 import android.view.ViewGroup
 import com.abelhu.travel.R
 import com.abelhu.travel.data.ToolBean
-import com.qicode.grid.DragBuilder
+import com.qicode.grid.GridDragBuilder
 import com.qicode.grid.GridLayoutManager
 import kotlinx.android.synthetic.main.item_tool.view.*
 
@@ -90,7 +90,7 @@ class ToolsAdapter : RecyclerView.Adapter<ToolsAdapter.ToolsHolder>() {
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         // 创建DragShadowBuilder，我把控件本身传进去
-                        val builder = DragBuilder(view, event.x, event.y)
+                        val builder = GridDragBuilder(view, event.x, event.y)
                         // 剪切板数据，可以在DragEvent.ACTION_DROP方法的时候获取。
                         val data = ClipData.newPlainText("position", position.toString())
                         // 开始拖拽
