@@ -75,6 +75,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
             moveDuration = 0
             removeDuration = 0
         }
+        // 去掉RecycleView的离屏缓存
+        toolsContainer.setItemViewCacheSize(0)
     }
 
     private fun onToolsDrop(event: DragEvent) {

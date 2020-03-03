@@ -18,7 +18,6 @@ import com.qicode.extension.TAG
 import com.qicode.grid.GridDragBuilder
 import com.qicode.grid.GridLayoutManager
 import kotlinx.android.synthetic.main.item_tool.view.*
-import java.util.*
 
 class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter.ToolsHolder>() {
 
@@ -31,9 +30,15 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         holder.onBind(tools.list[position], position)
     }
 
+    override fun onViewRecycled(holder: ToolsHolder) {
+        Log.i(TAG(), "onViewRecycled [${holder.bean?.row},${holder.bean?.col}]")
+        holder.handler.removeCallbacksAndMessages(null)
+        super.onViewRecycled(holder)
+    }
+
     class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        private var random = 0
-        private var bean: ToolBean? = null
+        var bean: ToolBean? = null
+        var handler = Handler()
         fun onBind(bean: ToolBean, position: Int) {
             Log.i(TAG(), "onBind tools[${bean.row}, ${bean.col}]")
             this.bean = bean
@@ -53,20 +58,15 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
                 }
             }
             // 设置动画
-            random = Random().nextInt()
-            view.setTag(R.integer.property_id, random)
             propertyShow()
         }
 
         private fun propertyShow() {
-            // 当脏数据到这里来的时候直接跳过
-            if (view.getTag(R.integer.property_id) == random) {
-                Log.i(TAG(), "propertyShow tools[${bean?.row}, ${bean?.col}]")
-                val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
-                animator.setTarget(view.propertyContainer)
-                animator.start()
-                Handler().postDelayed(this::propertyShow, 5000)
-            }
+            Log.i(TAG(), "propertyShow tools[${bean?.row}, ${bean?.col}]")
+            val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
+            animator.setTarget(view.propertyContainer)
+            animator.start()
+            handler.postDelayed(this::propertyShow, 5000)
         }
 
         private fun drag(event: MotionEvent, position: Int): Boolean {

@@ -9,7 +9,7 @@ class Tools(private val listener: ToolsOperateListener) {
     /**
      * 保存所有的工具
      */
-    val list = MutableList(4) { i -> ToolBean(i / 2, i % 2, 1) }
+    val list = MutableList(2) { i -> ToolBean(i / 2, i % 2, 1) }
 
     /**
      * 添加一个tool
