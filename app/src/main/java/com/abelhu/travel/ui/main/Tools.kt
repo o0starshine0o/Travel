@@ -9,7 +9,7 @@ class Tools(private val listener: ToolsOperateListener) {
     /**
      * 保存所有的工具
      */
-    val list = MutableList(30) { i -> ToolBean(i / 2, i % 2, 1) }
+    val list = MutableList(4) { i -> ToolBean(i / 2, i % 2, 1) }
 
     /**
      * 添加一个tool
@@ -46,11 +46,11 @@ class Tools(private val listener: ToolsOperateListener) {
                     // 移动tool
                     target == null -> listener.onToolsMove(index, moveTool(origin, row, col))
                     // 在原地
-                    target == origin -> listener.onToolsCancel(index, origin)
+                    target.second == origin -> listener.onToolsCancel(index, origin)
                     // 合并tool
-                    target.level == origin.level -> listener.onToolsMerge(mergeTool(origin, target))
+                    target.second.level == origin.level -> listener.onToolsMerge(mergeTool((index to origin), target))
                     // 交换两个tool
-                    else -> listener.onToolsExchange(exchangeTool(origin, target))
+                    else -> listener.onToolsExchange(exchangeTool((index to origin), target))
                 }
             }
         }
@@ -59,8 +59,8 @@ class Tools(private val listener: ToolsOperateListener) {
     /**
      * 根据行列来寻找工具
      */
-    private fun getTool(row: Int, col: Int): ToolBean? {
-        for (tool in list) if (tool.row == row && tool.col == col) return tool
+    private fun getTool(row: Int, col: Int): Pair<Int, ToolBean>? {
+        for ((index, tool) in list.withIndex()) if (tool.row == row && tool.col == col) return (index to tool)
         return null
     }
 
@@ -76,23 +76,23 @@ class Tools(private val listener: ToolsOperateListener) {
     /**
      * 合并两个工具
      */
-    private fun mergeTool(origin: ToolBean, target: ToolBean): ToolBean {
-        target.level += 1
-        list.remove(origin)
-        return target
+    private fun mergeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
+        target.second.level += 1
+        list.remove(origin.second)
+        return listOf(origin, target)
     }
 
     /**
      * 交换两个工具
      * 使用位运算，快速交换2个工具的row和col值
      */
-    private fun exchangeTool(origin: ToolBean, target: ToolBean): List<ToolBean> {
-        target.row = target.row.xor(origin.row)
-        origin.row = target.row.xor(origin.row)
-        target.row = target.row.xor(origin.row)
-        target.col = target.col.xor(origin.col)
-        origin.col = target.col.xor(origin.col)
-        target.col = target.col.xor(origin.col)
+    private fun exchangeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
+        target.second.row = target.second.row.xor(origin.second.row)
+        origin.second.row = target.second.row.xor(origin.second.row)
+        target.second.row = target.second.row.xor(origin.second.row)
+        target.second.col = target.second.col.xor(origin.second.col)
+        origin.second.col = target.second.col.xor(origin.second.col)
+        target.second.col = target.second.col.xor(origin.second.col)
         return listOf(origin, target)
     }
 }

@@ -68,6 +68,13 @@ class MainFragment : Fragment(), ToolsOperateListener {
             }
         }
         toolsContainer.adapter = ToolsAdapter(tools)
+        // 去掉item的各种动画
+        toolsContainer.itemAnimator.apply {
+            addDuration = 0
+            changeDuration = 0
+            moveDuration = 0
+            removeDuration = 0
+        }
     }
 
     private fun onToolsDrop(event: DragEvent) {
@@ -119,19 +126,18 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsMove(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsMove")
-        // 为了避免动画，这里直接采用全局刷新的方式
-        toolsContainer.adapter.notifyDataSetChanged()
+        toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsMerge(tool: ToolBean) {
+    override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsMerge")
-        // 为了避免动画，这里直接采用全局刷新的方式
-        toolsContainer.adapter.notifyDataSetChanged()
+        toolsContainer.adapter.notifyItemRemoved(tools[0].first)
+        toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
 
-    override fun onToolsExchange(tools: List<ToolBean>) {
+    override fun onToolsExchange(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsExchange")
-        // 为了避免动画，这里直接采用全局刷新的方式
-        toolsContainer.adapter.notifyDataSetChanged()
+        toolsContainer.adapter.notifyItemChanged(tools[0].first)
+        toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
 }

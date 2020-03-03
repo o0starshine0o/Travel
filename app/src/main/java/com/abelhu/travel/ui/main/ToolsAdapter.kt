@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -13,6 +14,7 @@ import android.view.View.DRAG_FLAG_OPAQUE
 import android.view.ViewGroup
 import com.abelhu.travel.R
 import com.abelhu.travel.data.ToolBean
+import com.qicode.extension.TAG
 import com.qicode.grid.GridDragBuilder
 import com.qicode.grid.GridLayoutManager
 import kotlinx.android.synthetic.main.item_tool.view.*
@@ -31,7 +33,10 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
 
     class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         private var random = 0
-        fun onBind(bean: ToolBean, position: Int): ToolsHolder {
+        private var bean: ToolBean? = null
+        fun onBind(bean: ToolBean, position: Int) {
+            Log.i(TAG(), "onBind tools[${bean.row}, ${bean.col}]")
+            this.bean = bean
             // 根据保存的数据，设置item的位置
             (view.layoutParams as GridLayoutManager.LayoutParams).apply { row = bean.row;col = bean.col }
             // 设置文本
@@ -51,12 +56,12 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
             random = Random().nextInt()
             view.setTag(R.integer.property_id, random)
             propertyShow()
-            return this
         }
 
         private fun propertyShow() {
             // 当脏数据到这里来的时候直接跳过
             if (view.getTag(R.integer.property_id) == random) {
+                Log.i(TAG(), "propertyShow tools[${bean?.row}, ${bean?.col}]")
                 val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
                 animator.setTarget(view.propertyContainer)
                 animator.start()

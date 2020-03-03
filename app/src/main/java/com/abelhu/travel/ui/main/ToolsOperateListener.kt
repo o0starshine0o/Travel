@@ -36,10 +36,10 @@ interface ToolsOperateListener {
     /**
      * 工具被合成，返回合成后的工具
      */
-    fun onToolsMerge(tool: ToolBean)
+    fun onToolsMerge(tools: List<Pair<Int, ToolBean>>)
 
     /**
      * 工具被交换，返回交换后的两个工具
      */
-    fun onToolsExchange(tools: List<ToolBean>)
+    fun onToolsExchange(tools: List<Pair<Int, ToolBean>>)
 }
