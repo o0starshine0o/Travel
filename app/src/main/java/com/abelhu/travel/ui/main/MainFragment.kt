@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -97,8 +98,13 @@ class MainFragment : Fragment(), ToolsOperateListener {
         quick.tag = myTools.getQuickTool()
         shakeAnimator.setTarget(quick)
         shakeQuickAdd()
+        updateQuickAdd()
     }
 
+    /**
+     * 当tool的拖拽被释放时，相应的操作
+     * 主要是计算出拖拽到的row和col
+     */
     private fun onToolsDrop(event: DragEvent) {
         Log.i(TAG(), "ACTION_DROP")
         // 获取在控件内的坐标信息
@@ -118,10 +124,23 @@ class MainFragment : Fragment(), ToolsOperateListener {
         }
     }
 
+    /**
+     * 抖动快速购买按钮
+     */
     private fun shakeQuickAdd() {
         // 每10秒抖动一次快速购买
         Handler().postDelayed(this::shakeQuickAdd, 10000)
         if (myTools.property > (quick.tag as ToolBean).buyPrice) shakeAnimator.start()
+    }
+
+    /**
+     * 快速购买的图片和文字
+     */
+    private fun updateQuickAdd() {
+        val tool = myTools.getQuickTool()
+        val fileName = "lottie/dog/ic_dog_level${tool.level}.png"
+        quick.levelImage.setImageDrawable(Drawable.createFromStream(context?.assets?.open(fileName), null))
+        quick.levelText.text = tool.level.toString()
     }
 
     override fun onToolsCancel(index: Int, tool: ToolBean) {
@@ -165,6 +184,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
         Log.i(TAG(), "onToolsMerge")
         // 更新产生速率
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        // 更新快速购买
+        updateQuickAdd()
         toolsContainer.adapter.notifyItemRemoved(tools[0].first)
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
