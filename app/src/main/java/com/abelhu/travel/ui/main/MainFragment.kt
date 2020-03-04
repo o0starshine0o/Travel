@@ -94,8 +94,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
         onPropertyUpdate(myTools.property)
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         // 快速购买
-        quick.setOnClickListener { myTools.addTool() }
-        quick.tag = myTools.getQuickTool()
+        quick.setOnClickListener { myTools.addTool(myTools.getQuickTool()) }
         shakeAnimator.setTarget(quick)
         shakeQuickAdd()
         updateQuickAdd()
@@ -131,7 +130,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
     private fun shakeQuickAdd() {
         // 每10秒抖动一次快速购买
         Handler().postDelayed(this::shakeQuickAdd, 10000)
-        if (myTools.property > (quick.tag as ToolBean).buyPrice) shakeAnimator.start()
+        if (myTools.property > myTools.getQuickTool().buyPrice) shakeAnimator.start()
     }
 
     /**
@@ -154,11 +153,18 @@ class MainFragment : Fragment(), ToolsOperateListener {
         // 更新产生速率
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemInserted(index)
+        // 更新快速购买
+        updateQuickAdd()
+        // TODO:通知服务器完成了工具的添加
     }
 
     override fun onToolsAddError(tool: ToolBean, cause: Exception) {
         Log.i(TAG(), "onToolsAddError: ${cause.message}")
-        Toast.makeText(context, R.string.recycler_tip, Toast.LENGTH_SHORT).show()
+        when (cause) {
+            is NotEnoughSpaceError -> Toast.makeText(context, R.string.recycler_tip, Toast.LENGTH_SHORT).show()
+            is NotEnoughPropertyError -> Toast.makeText(context, R.string.property_tip, Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onToolsDelete(index: Int, tool: ToolBean) {
@@ -166,6 +172,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
         // 更新产生速率
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemRemoved(index)
+        // 更新快速购买
+        updateQuickAdd()
     }
 
     override fun onToolsApply(index: Int, tool: ToolBean) {

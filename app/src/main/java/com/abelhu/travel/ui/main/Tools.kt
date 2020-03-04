@@ -23,11 +23,11 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
     /**
      * 保存所有的工具，需要服务器来设定
      */
-    val list = MutableList(2) { i -> ToolBean(i / 2, i % 2, 1, this) }
+    val list = MutableList(1) { i -> ToolBean(i / 4, i % 4, 10, this) }
     /**
      * 用户的总资产
      */
-    var property = 9990L
+    var property = 999990L
 
     /**
      * 增加总资产
@@ -45,12 +45,21 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
     fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
         Log.i(TAG(), "add tool")
         val newTool = tool ?: ToolBean(0, 0, 1, this)
+        // 如果资产不够了，需要抛出
+        if (property < newTool.buyPrice) listener.onToolsAddError(newTool, NotEnoughPropertyError())
+        // 寻找放置tool的空间
         for (i in 0 until rowMax) {
             for (j in 0 until colMax) {
-                if (getTool(i, j) == null) return listener.onToolsAdd(list.size + 1, newTool.apply { row = i;col = j }.also { list.add(it) })
+                if (getTool(i, j) == null) return listener.onToolsAdd(list.size + 1, newTool.apply {
+                    row = i
+                    col = j
+                    list.add(this)
+                    // 需要减去需要的费用
+                    this@Tools.addProperty(-buyPrice)
+                })
             }
         }
-        listener.onToolsAddError(newTool, Exception("no empty position for tool to put"))
+        listener.onToolsAddError(newTool, NotEnoughSpaceError())
     }
 
     /**
@@ -68,11 +77,12 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
             in 0..5 -> ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, 1, this)
             else -> {
                 var targetLevel = Int.MAX_VALUE
-                var minPrice = Double.MAX_VALUE
-                for (i in max(maxLevel - 10, 1)..(maxLevel - 4)) {
-                    (ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, i, this).buyPrice * (2.0.pow(7 - i))).takeIf { it < minPrice }?.also {
-                        minPrice = it
-                        targetLevel = i
+                var maxPrice = Double.MIN_VALUE
+                for (level in max(maxLevel - 10, 1)..(maxLevel - 4)) {
+                    val result = ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, level, this).buyPrice * (2.0.pow(7 - level))
+                    if (result > maxPrice && result <= property) {
+                        maxPrice = result
+                        targetLevel = level
                     }
                 }
                 ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, targetLevel, this)
@@ -179,3 +189,6 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
         return max
     }
 }
+
+class NotEnoughSpaceError : Exception("not enough space for tool to put")
+class NotEnoughPropertyError : Exception("not enough property for tool to buy")
