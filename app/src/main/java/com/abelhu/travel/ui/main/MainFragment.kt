@@ -118,7 +118,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
         val index = event.clipData.getItemAt(0).text.toString().toInt()
         // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
         (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
-            Log.i(this@MainFragment.TAG(), "item $index drop row-col is [$i, $j]")
+            val tool = myTools.list[index]
+            Log.i(this@MainFragment.TAG(), "item($index)[${tool.row}, ${tool.col}] drop row-col is [$i, $j]")
             // 根据目标的row-col，再进行下一步操作
             myTools.operateTool(index, i, j)
         }

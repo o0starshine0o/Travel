@@ -27,7 +27,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false))
 
     override fun onBindViewHolder(holder: ToolsHolder, position: Int) {
-        holder.onBind(tools.list[position], position)
+        holder.onBind(tools.list[position])
     }
 
     override fun onViewRecycled(holder: ToolsHolder) {
@@ -40,7 +40,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         var bean: ToolBean? = null
         var handler = Handler()
         private val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
-        fun onBind(bean: ToolBean, position: Int) {
+        fun onBind(bean: ToolBean) {
             Log.i(TAG(), "onBind tools[${bean.row}, ${bean.col}]")
             this.bean = bean
             // 设置tool可见
@@ -56,7 +56,8 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
             // 设置drag
             view.setOnTouchListener { _, event ->
                 when (event.action) {
-                    MotionEvent.ACTION_DOWN -> drag(event, position)
+                    // 注意：bind时候的position和drag时候的position可能已经由于（merge、delete、add等操作）不一样了，这里需要重新获取下目前的索引
+                    MotionEvent.ACTION_DOWN -> drag(event, tools.list.indexOf(bean))
                     else -> false
                 }
             }

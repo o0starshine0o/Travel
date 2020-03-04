@@ -138,6 +138,7 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
      * 把工具移动到指定的行列
      */
     private fun moveTool(tool: ToolBean, row: Int, col: Int): ToolBean {
+        Log.i(TAG(), "move tool [${tool.row}, ${tool.col}] -> [$row, $col]")
         tool.row = row
         tool.col = col
         return tool
@@ -147,6 +148,7 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
      * 合并两个工具
      */
     private fun mergeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
+        Log.i(TAG(), "merge tool [${origin.second.row}, ${origin.second.col}] -> [${target.second.row}, ${target.second.col}]")
         list.remove(origin.second)
         target.second.addLevel()
         // 移除origin的时候，list的结构发生了改变，需要重新获取target的索引
@@ -158,6 +160,7 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
      * 使用位运算，快速交换2个工具的row和col值
      */
     private fun exchangeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
+        Log.i(TAG(), "exchange tool [${origin.second.row}, ${origin.second.col}] -> [${target.second.row}, ${target.second.col}]")
         target.second.row = target.second.row.xor(origin.second.row)
         origin.second.row = target.second.row.xor(origin.second.row)
         target.second.row = target.second.row.xor(origin.second.row)
