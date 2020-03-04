@@ -47,7 +47,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
             bean.visibility = true
             // 根据保存的数据，设置item的位置
             (view.layoutParams as GridLayoutManager.LayoutParams).apply { row = bean.row;col = bean.col }
-            // 设置文本
+            // 设置文本， 图片
             val fileName = "lottie/dog/ic_dog_level${bean.level}.png"
             view.image.setImageDrawable(Drawable.createFromStream(view.context.assets.open(fileName), null))
             view.level.text = bean.level.toString()

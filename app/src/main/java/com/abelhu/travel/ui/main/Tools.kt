@@ -113,9 +113,10 @@ class Tools(private val listener: ToolsOperateListener) {
      * 合并两个工具
      */
     private fun mergeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
-        target.second.addLevel()
         list.remove(origin.second)
-        return listOf(origin, target)
+        target.second.addLevel()
+        // 移除origin的时候，list的结构发生了改变，需要重新获取target的索引
+        return listOf(origin, (list.indexOf(target.second) to target.second))
     }
 
     /**
