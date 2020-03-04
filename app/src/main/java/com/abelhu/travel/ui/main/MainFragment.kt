@@ -121,7 +121,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsAddError(tool: ToolBean, cause: Exception) {
         Log.i(TAG(), "onToolsAddError: ${cause.message}")
-        Toast.makeText(context, "位置占满，无法添加", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.recycler_tip, Toast.LENGTH_SHORT).show()
     }
 
     override fun onToolsDelete(index: Int, tool: ToolBean) {
