@@ -70,7 +70,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
                 Log.i(TAG(), "propertyShow tools[${row}, ${col}]")
                 // 计算产生的资源
                 val current = System.currentTimeMillis()
-                val resource = (current - update) / 1000 * property
+                val resource = ((current - update) / 1000 * property * coefficient).toLong()
                 if (resource > 0) {
                     // 更新tool
                     update = current

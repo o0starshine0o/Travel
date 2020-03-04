@@ -3,7 +3,6 @@ package com.abelhu.travel.ui.main
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.content.Context
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -19,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.abelhu.travel.R
 import com.abelhu.travel.data.ToolBean
-import com.abelhu.travel.ui.empty.EmptyActivity
 import com.qicode.cycle.CycleBitmap
 import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.TAG
@@ -53,7 +51,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 当占位控件得到位置信息后再设置toolsContainer
             toolsContainer.post { initToolsContainer(toolsContainer) }
             // 临时添加监听事件
-            speedup.setOnClickListener { startActivity(Intent(context, EmptyActivity::class.java)) }
+            speedup.setOnClickListener { speedUp(if (myTools.coefficient > 1.0001) 1.0f else 2.0f) }
             // 设置拖拽监听
             setOnDragListener { _, event ->
                 // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
@@ -133,6 +131,22 @@ class MainFragment : Fragment(), ToolsOperateListener {
         }
         // 隐藏回收站
         recycle.visibility = View.INVISIBLE
+    }
+
+    private fun speedUp(coefficient: Float) {
+        myTools.coefficient = coefficient
+        // 更新产生速率
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        // 界面展示
+        if (myTools.coefficient > 1.00001) {
+            // 加速
+            speedup.text = speedup.context.resources.getString(R.string.speedup_with, coefficient)
+            speed.setTextColor(Color.GREEN)
+        } else {
+            // 恢复到正常速度
+            speedup.text = speedup.context.resources.getString(R.string.speedup)
+            speed.setTextColor(Color.BLACK)
+        }
     }
 
     /**

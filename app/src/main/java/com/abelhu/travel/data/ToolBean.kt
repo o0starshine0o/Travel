@@ -26,6 +26,8 @@ data class ToolBean(
     var update: Long = 0,
     // 工具每秒产生的资源数量
     var property: Int = 0,
+    // 工具每秒产生资源数量的系数
+    var coefficient: Float = 1f,
     // 工具是否在界面内可见（如果不可见，表示在缓存队列）
     var visibility: Boolean = true
 ) : Serializable {
@@ -43,6 +45,7 @@ data class ToolBean(
             else -> (basePrice * 1.17.pow(listener.buyCount(level) - 1)).toLong()
         }
         recyclePrice = (0.1 * basePrice).toLong()
+        coefficient = listener.coefficient()
     }
 
     fun addLevel() {

@@ -21,13 +21,22 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
         put(5, 10)
     }
     /**
+     * 生成资产的系数
+     * 注意：coefficient需要再list之前初始化，因为list里面会使用到coefficient
+     */
+    var coefficient = 1.0f
+        set(value) {
+            field = value
+            list.forEach { it.coefficient = field }
+        }
+    /**
      * 保存所有的工具，需要服务器来设定
      */
-    val list = MutableList(1) { i -> ToolBean(i / 4, i % 4, 10, this) }
+    val list = MutableList(1) { i -> ToolBean(i / 4, i % 4, 1, this) }
     /**
      * 用户的总资产
      */
-    var property = 999990L
+    var property = 0L
 
     /**
      * 增加总资产
@@ -67,7 +76,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
      */
     fun getSpeed(): Long {
         var result = 0L
-        list.forEach { if (it.visibility) result += it.property }
+        list.forEach { if (it.visibility) result += (it.property * it.coefficient).toLong() }
         return result
     }
 
@@ -135,6 +144,8 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
     }
 
     override fun buyCount(level: Int) = map[level, 0]
+
+    override fun coefficient() = coefficient
 
     /**
      * 根据行列来寻找工具
