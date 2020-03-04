@@ -36,12 +36,15 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         super.onViewRecycled(holder)
     }
 
-    class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         var bean: ToolBean? = null
         var handler = Handler()
+        private val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
         fun onBind(bean: ToolBean, position: Int) {
             Log.i(TAG(), "onBind tools[${bean.row}, ${bean.col}]")
             this.bean = bean
+            // 设置tool可见
+            bean.visibility = true
             // 根据保存的数据，设置item的位置
             (view.layoutParams as GridLayoutManager.LayoutParams).apply { row = bean.row;col = bean.col }
             // 设置文本
@@ -62,11 +65,24 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         }
 
         private fun propertyShow() {
-            Log.i(TAG(), "propertyShow tools[${bean?.row}, ${bean?.col}]")
-            val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
-            animator.setTarget(view.propertyContainer)
-            animator.start()
-            handler.postDelayed(this::propertyShow, 5000)
+            bean?.apply {
+                Log.i(TAG(), "propertyShow tools[${row}, ${col}]")
+                // 计算产生的资源
+                val current = System.currentTimeMillis()
+                val resource = (current - update) / 1000 * property
+                if (resource > 0) {
+                    // 更新tool
+                    update = current
+                    tools.addProperty(resource)
+                    // 更新显示
+                    view.property.text = view.context.resources.getString(R.string.add_resource, resource)
+                    // 启动动画
+                    animator.setTarget(view.propertyContainer)
+                    animator.start()
+                }
+                // 准备下一轮更新
+                handler.postDelayed(this@ToolsHolder::propertyShow, 5000)
+            }
         }
 
         private fun drag(event: MotionEvent, position: Int): Boolean {

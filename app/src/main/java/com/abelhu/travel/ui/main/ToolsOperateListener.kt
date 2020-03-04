@@ -42,4 +42,9 @@ interface ToolsOperateListener {
      * 工具被交换，返回交换后的两个工具
      */
     fun onToolsExchange(tools: List<Pair<Int, ToolBean>>)
+
+    /**
+     * 更新总资产
+     */
+    fun onPropertyUpdate(now: Long)
 }

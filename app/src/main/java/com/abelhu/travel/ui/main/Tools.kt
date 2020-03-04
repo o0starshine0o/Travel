@@ -10,6 +10,20 @@ class Tools(private val listener: ToolsOperateListener) {
      * 保存所有的工具
      */
     val list = MutableList(2) { i -> ToolBean(i / 2, i % 2, 1) }
+    /**
+     * 用户的总资产
+     */
+    var property = 0L
+
+    /**
+     * 增加总资产
+     * 防止多线程造成的计算错误
+     */
+    @Synchronized
+    fun addProperty(value: Long) {
+        property += value
+        listener.onPropertyUpdate(property)
+    }
 
     /**
      * 添加一个tool
@@ -23,6 +37,28 @@ class Tools(private val listener: ToolsOperateListener) {
             }
         }
         listener.onToolsAddError(newTool, Exception("no empty position for tool to put"))
+    }
+
+    /**
+     * 产生资产的速率
+     */
+    fun getSpeed(): Long {
+        var result = 0L
+        list.forEach { if (it.visibility) result += it.property }
+        return result
+    }
+
+    /**
+     * 计算最终要展示的字符
+     */
+    fun showText(value: Long): String {
+        var c = 'a' - 1
+        var all = value.toFloat()
+        while (all / 10000 > 10000) {
+            all /= 10000
+            c += 1
+        }
+        return if (c == 'a' - 1) "${all.toInt()}" else "${String.format("%.2f", all)}$c$c"
     }
 
     /**
@@ -77,7 +113,7 @@ class Tools(private val listener: ToolsOperateListener) {
      * 合并两个工具
      */
     private fun mergeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
-        target.second.level += 1
+        target.second.addLevel()
         list.remove(origin.second)
         return listOf(origin, target)
     }

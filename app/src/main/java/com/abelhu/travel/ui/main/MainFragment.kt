@@ -1,5 +1,7 @@
 package com.abelhu.travel.ui.main
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -26,7 +28,9 @@ import kotlinx.android.synthetic.main.fragment_main.view.*
 
 class MainFragment : Fragment(), ToolsOperateListener {
 
-    private val tools = Tools(this)
+    private val myTools = Tools(this)
+
+    private lateinit var animator: Animator
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)?.apply {
@@ -39,7 +43,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 当占位控件得到位置信息后再设置toolsContainer
             toolsContainer.post { initToolsContainer(toolsContainer) }
             // 快速购买
-            quick.setOnClickListener { tools.addTool() }
+            quick.setOnClickListener { myTools.addTool() }
             // 临时添加监听事件
             speedup.setOnClickListener { startActivity(Intent(context, EmptyActivity::class.java)) }
             // 设置拖拽监听
@@ -48,6 +52,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
                 if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
                 true
             }
+            // 设置动画
+            animator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
         }
     }
 
@@ -67,7 +73,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
                 bottom -= toolsPosition[1]
             }
         }
-        toolsContainer.adapter = ToolsAdapter(tools)
+        toolsContainer.adapter = ToolsAdapter(myTools)
         // 去掉item的各种动画
         toolsContainer.itemAnimator.apply {
             addDuration = 0
@@ -77,6 +83,9 @@ class MainFragment : Fragment(), ToolsOperateListener {
         }
         // 去掉RecycleView的离屏缓存
         toolsContainer.setItemViewCacheSize(0)
+        // 设置资产
+        onPropertyUpdate(myTools.property)
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
     }
 
     private fun onToolsDrop(event: DragEvent) {
@@ -94,7 +103,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
         (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
             Log.i(this@MainFragment.TAG(), "item $index drop row-col is [$i, $j]")
             // 根据目标的row-col，再进行下一步操作
-            tools.operateTool(index, i, j)
+            myTools.operateTool(index, i, j)
         }
     }
 
@@ -105,6 +114,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsAdd(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
+        // 更新产生速率
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemInserted(index)
     }
 
@@ -115,6 +126,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsDelete(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsDelete")
+        // 更新产生速率
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemRemoved(index)
     }
 
@@ -133,6 +146,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsMerge")
+        // 更新产生速率
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemRemoved(tools[0].first)
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
@@ -141,5 +156,15 @@ class MainFragment : Fragment(), ToolsOperateListener {
         Log.i(TAG(), "onToolsExchange")
         toolsContainer.adapter.notifyItemChanged(tools[0].first)
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
+    }
+
+    override fun onPropertyUpdate(now: Long) {
+        // 如果展示的字符和当前的字符不一样，显示心跳动画
+        myTools.showText(now).takeIf { it != property?.text }.apply {
+            property.text = this
+            animator.cancel()
+            animator.setTarget(property)
+            animator.start()
+        }
     }
 }

@@ -2,4 +2,6 @@
     <string name="app_name">Travel</string>
     <string name="title_activity_empty">EmptyActivity</string>
     <string name="title_activity_base">BaseActivity</string>
+    <string name="add_resource">+%1$d</string>
+    <string name="per_second">%1$s/秒</string>
 </resources>
