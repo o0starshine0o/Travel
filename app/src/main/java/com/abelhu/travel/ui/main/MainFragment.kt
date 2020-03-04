@@ -198,7 +198,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onPropertyUpdate(now: Long) {
         // 如果展示的字符和当前的字符不一样，显示心跳动画
-        myTools.showText(now).takeIf { it != property?.text }.apply {
+        myTools.showText(now).takeIf { it != property?.text }?.apply {
             property.text = this
             beatAnimator.cancel()
             beatAnimator.setTarget(property)

@@ -27,7 +27,7 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
     /**
      * 用户的总资产
      */
-    var property = 10000L
+    var property = 9990L
 
     /**
      * 增加总资产
@@ -86,7 +86,7 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
     fun showText(value: Long): String {
         var c = 'a' - 1
         var all = value.toFloat()
-        while (all / 10000 > 10000) {
+        while (all / 10000 >= 1) {
             all /= 10000
             c += 1
         }
