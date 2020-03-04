@@ -76,6 +76,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
                     tools.addProperty(resource)
                     // 更新显示
                     view.property.text = view.context.resources.getString(R.string.add_resource, resource)
+                    view.propertyContainer.visibility = View.VISIBLE
                     // 启动动画
                     animator.setTarget(view.propertyContainer)
                     animator.start()
@@ -86,6 +87,8 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         }
 
         private fun drag(event: MotionEvent, position: Int): Boolean {
+            // 隐藏view中的动画部分
+            view.propertyContainer.visibility = View.INVISIBLE
             // 创建DragShadowBuilder，我把控件本身传进去
             val builder = GridDragBuilder(view, event.x, event.y)
             // 剪切板数据，可以在DragEvent.ACTION_DROP方法的时候获取。
