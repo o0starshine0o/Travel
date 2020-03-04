@@ -2,10 +2,12 @@ package com.abelhu.travel.ui.main
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -30,7 +32,14 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     private val myTools = Tools(this)
 
-    private lateinit var animator: Animator
+    private lateinit var beatAnimator: Animator
+    private lateinit var shakeAnimator: Animator
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        beatAnimator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
+        shakeAnimator = AnimatorInflater.loadAnimator(context, R.animator.shake)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)?.apply {
@@ -42,8 +51,6 @@ class MainFragment : Fragment(), ToolsOperateListener {
             travelContainer.post { (travelContainer.background as CycleDrawable).start() }
             // 当占位控件得到位置信息后再设置toolsContainer
             toolsContainer.post { initToolsContainer(toolsContainer) }
-            // 快速购买
-            quick.setOnClickListener { myTools.addTool() }
             // 临时添加监听事件
             speedup.setOnClickListener { startActivity(Intent(context, EmptyActivity::class.java)) }
             // 设置拖拽监听
@@ -52,12 +59,11 @@ class MainFragment : Fragment(), ToolsOperateListener {
                 if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
                 true
             }
-            // 设置动画
-            animator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
         }
     }
 
     private fun initToolsContainer(toolsContainer: RecyclerView) {
+        // 设置layout
         toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
             // 再layoutManager完成item的计算后，设置toolsContainer的背景
             toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
@@ -86,6 +92,11 @@ class MainFragment : Fragment(), ToolsOperateListener {
         // 设置资产
         onPropertyUpdate(myTools.property)
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        // 快速购买
+        quick.setOnClickListener { myTools.addTool() }
+        quick.tag = myTools.getQuickTool()
+        shakeAnimator.setTarget(quick)
+        shakeQuickAdd()
     }
 
     private fun onToolsDrop(event: DragEvent) {
@@ -105,6 +116,12 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 根据目标的row-col，再进行下一步操作
             myTools.operateTool(index, i, j)
         }
+    }
+
+    private fun shakeQuickAdd() {
+        // 每10秒抖动一次快速购买
+        Handler().postDelayed(this::shakeQuickAdd, 10000)
+        if (myTools.property > (quick.tag as ToolBean).buyPrice) shakeAnimator.start()
     }
 
     override fun onToolsCancel(index: Int, tool: ToolBean) {
@@ -162,9 +179,9 @@ class MainFragment : Fragment(), ToolsOperateListener {
         // 如果展示的字符和当前的字符不一样，显示心跳动画
         myTools.showText(now).takeIf { it != property?.text }.apply {
             property.text = this
-            animator.cancel()
-            animator.setTarget(property)
-            animator.start()
+            beatAnimator.cancel()
+            beatAnimator.setTarget(property)
+            beatAnimator.start()
         }
     }
 }

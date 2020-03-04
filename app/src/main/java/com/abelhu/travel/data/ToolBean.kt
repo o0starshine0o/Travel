@@ -1,5 +1,6 @@
 package com.abelhu.travel.data
 
+import com.abelhu.travel.ui.main.ToolsInitListener
 import java.io.Serializable
 import kotlin.math.pow
 
@@ -13,6 +14,14 @@ data class ToolBean(
     var col: Int,
     // 工具的等级
     var level: Int,
+    // 初始化工具时需要的接口
+    var listener: ToolsInitListener,
+    // 基础价格
+    var basePrice: Long = 0,
+    // 购买价格
+    var buyPrice: Long = 0,
+    // 回收价格
+    var recyclePrice: Long = 0,
     // 工具上次产生资源的时间
     var update: Long = 0,
     // 工具每秒产生的资源数量
@@ -23,6 +32,17 @@ data class ToolBean(
     init {
         update = System.currentTimeMillis()
         property = (4 * 2.05.pow(level - 1)).toInt()
+        basePrice = when (level) {
+            1 -> 100
+            2 -> 1500
+            3 -> 67500
+            else -> 6750 * 2.66.pow(level - 3).toLong()
+        }
+        buyPrice = when (level) {
+            1, 2 -> (basePrice * 1.07.pow(listener.buyCount(level) - 1)).toLong()
+            else -> (basePrice * 1.17.pow(listener.buyCount(level) - 1)).toLong()
+        }
+        recyclePrice = (0.1 * basePrice).toLong()
     }
 
     fun addLevel() {

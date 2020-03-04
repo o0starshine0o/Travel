@@ -1,19 +1,33 @@
 package com.abelhu.travel.ui.main
 
 import android.util.Log
+import android.util.SparseIntArray
 import com.abelhu.travel.data.ToolBean
 import com.qicode.extension.TAG
 import com.qicode.grid.GridLayoutManager
+import kotlin.math.max
+import kotlin.math.pow
 
-class Tools(private val listener: ToolsOperateListener) {
+class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
     /**
-     * 保存所有的工具
+     * 保存每个等级的工具已经购买的次数，需要服务器来设定
+     * 注意：map需要再list之前初始化，因为list里面会根据购买的数量计算下一次购买的价格
      */
-    val list = MutableList(2) { i -> ToolBean(i / 2, i % 2, 1) }
+    val map = SparseIntArray(16).apply {
+        put(1, 10)
+        put(2, 10)
+        put(3, 10)
+        put(4, 10)
+        put(5, 10)
+    }
+    /**
+     * 保存所有的工具，需要服务器来设定
+     */
+    val list = MutableList(2) { i -> ToolBean(i / 2, i % 2, 1, this) }
     /**
      * 用户的总资产
      */
-    var property = 0L
+    var property = 10000L
 
     /**
      * 增加总资产
@@ -30,7 +44,7 @@ class Tools(private val listener: ToolsOperateListener) {
      */
     fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
         Log.i(TAG(), "add tool")
-        val newTool = tool ?: ToolBean(0, 0, 1)
+        val newTool = tool ?: ToolBean(0, 0, 1, this)
         for (i in 0 until rowMax) {
             for (j in 0 until colMax) {
                 if (getTool(i, j) == null) return listener.onToolsAdd(list.size + 1, newTool.apply { row = i;col = j }.also { list.add(it) })
@@ -46,6 +60,24 @@ class Tools(private val listener: ToolsOperateListener) {
         var result = 0L
         list.forEach { if (it.visibility) result += it.property }
         return result
+    }
+
+    fun getQuickTool(): ToolBean {
+        val maxLevel = maxLevel()
+        return when (maxLevel) {
+            in 0..5 -> ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, 1, this)
+            else -> {
+                var targetLevel = Int.MAX_VALUE
+                var minPrice = Double.MAX_VALUE
+                for (i in max(maxLevel - 10, 1)..(maxLevel - 4)) {
+                    (ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, i, this).buyPrice * (2.0.pow(7 - i))).takeIf { it < minPrice }?.also {
+                        minPrice = it
+                        targetLevel = i
+                    }
+                }
+                ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, targetLevel, this)
+            }
+        }
     }
 
     /**
@@ -92,6 +124,8 @@ class Tools(private val listener: ToolsOperateListener) {
         }
     }
 
+    override fun buyCount(level: Int) = map[level, 0]
+
     /**
      * 根据行列来寻找工具
      */
@@ -131,5 +165,14 @@ class Tools(private val listener: ToolsOperateListener) {
         origin.second.col = target.second.col.xor(origin.second.col)
         target.second.col = target.second.col.xor(origin.second.col)
         return listOf(origin, target)
+    }
+
+    /**
+     * 获取最高的等级
+     */
+    private fun maxLevel(): Int {
+        var max = 0
+        list.forEach { max = max(max, it.level) }
+        return max
     }
 }
