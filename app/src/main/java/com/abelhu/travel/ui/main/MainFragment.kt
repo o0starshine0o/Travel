@@ -69,11 +69,20 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 再layoutManager完成item的计算后，设置toolsContainer的背景
             toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
         }.apply {
-            // 设置apply的区域，以toolsContainer的左上角为原点
+            // 获取toolsContainer的左上角为原点
             val toolsPosition = intArrayOf(0, 0)
             toolsContainer.getLocationInWindow(toolsPosition)
+            // 设置apply的区域，以toolsContainer的左上角为原点
             travel.getGlobalVisibleRect(applyRect)
             applyRect.apply {
+                left -= toolsPosition[0]
+                right -= toolsPosition[0]
+                top -= toolsPosition[1]
+                bottom -= toolsPosition[1]
+            }
+            // 设置recycle的区域，以toolsContainer的左上角为原点
+            recycle.getGlobalVisibleRect(recycleRect)
+            recycleRect.apply {
                 left -= toolsPosition[0]
                 right -= toolsPosition[0]
                 top -= toolsPosition[1]
@@ -122,6 +131,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 根据目标的row-col，再进行下一步操作
             myTools.operateTool(index, i, j)
         }
+        // 隐藏回收站
+        recycle.visibility = View.INVISIBLE
     }
 
     /**
@@ -130,7 +141,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
     private fun shakeQuickAdd() {
         // 每10秒抖动一次快速购买
         Handler().postDelayed(this::shakeQuickAdd, 10000)
-        if (myTools.property > myTools.getQuickTool().buyPrice) shakeAnimator.start()
+        if (myTools.property > myTools.getQuickTool().buyPrice && recycle.visibility == View.INVISIBLE) shakeAnimator.start()
     }
 
     /**
@@ -143,8 +154,17 @@ class MainFragment : Fragment(), ToolsOperateListener {
         quick.levelText.text = tool.level.toString()
     }
 
+    override fun onToolsSelect(index: Int) {
+        Log.i(TAG(), "onToolsSelect: $index")
+        // 更新回收站文本
+        recycle.recycleText.text = recycle.context.resources.getString(R.string.recycle_property, myTools.list[index].recyclePrice)
+        // 显示回收站
+        recycle.visibility = View.VISIBLE
+    }
+
     override fun onToolsCancel(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsCancel")
+        // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
@@ -167,8 +187,8 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     }
 
-    override fun onToolsDelete(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsDelete")
+    override fun onToolsRecycle(index: Int, tool: ToolBean) {
+        Log.i(TAG(), "onToolsRecycle")
         // 更新产生速率
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemRemoved(index)
@@ -178,14 +198,17 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsApply")
+        // 应用新动画
         travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
         travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
         travel.playAnimation()
+        // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
     override fun onToolsMove(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsMove")
+        // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 

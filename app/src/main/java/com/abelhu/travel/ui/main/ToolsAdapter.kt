@@ -88,6 +88,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
         }
 
         private fun drag(event: MotionEvent, position: Int): Boolean {
+            tools.listener.onToolsSelect(position)
             // 隐藏view中的动画部分
             view.propertyContainer.visibility = View.INVISIBLE
             // 创建DragShadowBuilder，我把控件本身传进去

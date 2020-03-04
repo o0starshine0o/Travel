@@ -4,6 +4,11 @@ import com.abelhu.travel.data.ToolBean
 
 interface ToolsOperateListener {
     /**
+     * 当tool被选中时
+     */
+    fun onToolsSelect(index: Int)
+
+    /**
      * 取消对tool的操作
      */
     fun onToolsCancel(index: Int, tool: ToolBean)
@@ -21,7 +26,7 @@ interface ToolsOperateListener {
     /**
      * 删除tool
      */
-    fun onToolsDelete(index: Int, tool: ToolBean)
+    fun onToolsRecycle(index: Int, tool: ToolBean)
 
     /**
      * 把工具应用到某地方

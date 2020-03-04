@@ -208,6 +208,43 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/recycle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/round_rect_gray"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/speedup"
+                app:layout_constraintStart_toEndOf="@+id/shop"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/recycleImage"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="-40dp"
+                    android:src="@mipmap/ic_launcher_round"
+                    android:tint="@android:color/darker_gray"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/recycleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/recycle_property"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/speedup"
                 android:layout_width="wrap_content"

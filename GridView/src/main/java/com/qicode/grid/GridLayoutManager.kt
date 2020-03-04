@@ -18,14 +18,23 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
         // 约定（-1， -1）表示增加tool
         val ADD = intArrayOf(-1, -1)
         // 约定（-2， -2）表示删除tool
-        val DELETE = intArrayOf(-2, -2)
+        val RECYCLE = intArrayOf(-2, -2)
         // 约定（-3， -3）表示取消tool的操作
         val CANCEL = intArrayOf(-3, -3)
         // 其他约定，比如更换工具
         val APPLY = intArrayOf(-100, -100)
     }
 
+    /**
+     * 应用的区域，拖拽到这里面表示应用tool
+     */
     var applyRect = Rect()
+
+    /**
+     * 回收的区域，拖拽到这里面表示回收tool
+     */
+    var recycleRect = Rect()
+
     /**
      * 使用二维数组保存绘制位置的左上角信息(top,left)，相对于本控件而言
      */
@@ -41,6 +50,7 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
 
     fun getRowCol(x: Float, y: Float, result: (row: Int, col: Int) -> Unit) {
         applyRect.apply { if (contains(x.toInt(), y.toInt())) return result.invoke(APPLY[0], APPLY[1]) }
+        recycleRect.apply { if (contains(x.toInt(), y.toInt())) return result.invoke(RECYCLE[0], RECYCLE[1]) }
         for (i in position.indices) {
             for (j in position[i].indices) {
                 if (RectF().apply {

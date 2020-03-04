@@ -8,7 +8,7 @@ import com.qicode.grid.GridLayoutManager
 import kotlin.math.max
 import kotlin.math.pow
 
-class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
+class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
     /**
      * 保存每个等级的工具已经购买的次数，需要服务器来设定
      * 注意：map需要再list之前初始化，因为list里面会根据购买的数量计算下一次购买的价格
@@ -115,7 +115,7 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
             // 取消对tool的操作
             intArrayOf(row, col).contentEquals(GridLayoutManager.CANCEL) -> listener.onToolsCancel(index, origin)
             // 删除这个tool
-            intArrayOf(row, col).contentEquals(GridLayoutManager.DELETE) -> listener.onToolsDelete(index, origin.apply { list.remove(this) })
+            intArrayOf(row, col).contentEquals(GridLayoutManager.RECYCLE) -> listener.onToolsRecycle(index, recycleTool(origin))
             // 将这个tool应用到某个地方
             intArrayOf(row, col).contentEquals(GridLayoutManager.APPLY) -> listener.onToolsApply(index, origin)
             else -> {
@@ -178,6 +178,16 @@ class Tools(private val listener: ToolsOperateListener) : ToolsInitListener {
         origin.second.col = target.second.col.xor(origin.second.col)
         target.second.col = target.second.col.xor(origin.second.col)
         return listOf(origin, target)
+    }
+
+    /**
+     * 回收工具
+     * 注意：需要补充对应的回收价格
+     */
+    private fun recycleTool(origin: ToolBean): ToolBean {
+        list.remove(origin)
+        addProperty(origin.recyclePrice)
+        return origin
     }
 
     /**
