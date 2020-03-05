@@ -170,12 +170,13 @@ class MainFragment : Fragment(), ToolsOperateListener {
         val fileName = "lottie/dog/ic_dog_level${tool.level}.png"
         quick.levelImage.setImageDrawable(Drawable.createFromStream(context?.assets?.open(fileName), null))
         quick.levelText.text = tool.level.toString()
+        Log.i(TAG(), "updateQuickAdd with level ${tool.level}")
     }
 
     override fun onToolsSelect(index: Int) {
         Log.i(TAG(), "onToolsSelect: $index")
         // 更新回收站文本
-        recycle.recycleText.text = recycle.context.resources.getString(R.string.recycle_property, myTools.list[index].recyclePrice)
+        recycle.recycleText.text = recycle.context.resources.getString(R.string.recycle_property, ToolBean.showText(myTools.list[index].recyclePrice))
         // 显示回收站
         recycle.visibility = View.VISIBLE
     }
@@ -254,5 +255,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
             beatAnimator.setTarget(property)
             beatAnimator.start()
         }
+        // 更新快速购买
+        updateQuickAdd()
     }
 }

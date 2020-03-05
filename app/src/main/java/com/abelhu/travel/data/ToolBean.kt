@@ -2,6 +2,7 @@ package com.abelhu.travel.data
 
 import java.io.Serializable
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Created by admin on 2020-02-28
@@ -41,7 +42,7 @@ data class ToolBean(
                 all /= BigDecimal(10000)
                 c += 1
             }
-            return if (c == 'a' - 1) "${all.setScale(0)}" else "${all.setScale(2)}$c$c"
+            return if (c == 'a' - 1) "${all.setScale(0, RoundingMode.HALF_UP)}" else "${all.setScale(2, RoundingMode.HALF_UP)}$c$c"
         }
     }
 

@@ -36,7 +36,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
     /**
      * 保存所有的工具，需要服务器来设定
      */
-    val list = MutableList(1) { i -> ToolBean(i / 4, i % 4, 1, this) }
+    val list = MutableList(10) { i -> ToolBean(i / 4, i % 4, 30, this) }
     /**
      * 用户的总资产
      */
@@ -56,7 +56,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      * 添加一个tool
      */
     fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
-        Log.i(TAG(), "add tool")
+        Log.i(TAG(), "add tool with level: ${tool?.level}")
         val newTool = tool ?: ToolBean(0, 0, 1, this)
         // 如果资产不够了，需要抛出
         if (property < newTool.buyPrice) {
@@ -95,7 +95,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
                 var targetLevel = Int.MAX_VALUE
                 var maxPrice = BigDecimal.ZERO
                 for (level in max(maxLevel - 10, 1)..(maxLevel - 4)) {
-                    val result = ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, level, this).buyPrice * BigDecimal(2).pow(7 - level)
+                    val result = ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, level, this).buyPrice * BigDecimal(2).pow(max(0, 7 - level))
                     if (maxPrice == BigDecimal.ZERO || result > maxPrice && result <= property) {
                         maxPrice = result
                         targetLevel = level
@@ -174,8 +174,8 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      */
     override fun buyPrice(toolBean: ToolBean): BigDecimal {
         return when (toolBean.level) {
-            1, 2 -> toolBean.basePrice * BigDecimal("1.07").pow(buyCount(toolBean.level) - 1)
-            else -> toolBean.basePrice * BigDecimal("1.17").pow(buyCount(toolBean.level) - 1)
+            1, 2 -> toolBean.basePrice * BigDecimal("1.07").pow(max(0, buyCount(toolBean.level) - 1))
+            else -> toolBean.basePrice * BigDecimal("1.17").pow(max(0, buyCount(toolBean.level) - 1))
         }
     }
 
