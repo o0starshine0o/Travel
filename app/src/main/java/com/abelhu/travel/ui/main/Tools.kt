@@ -3,12 +3,16 @@ package com.abelhu.travel.ui.main
 import android.util.Log
 import android.util.SparseIntArray
 import com.abelhu.travel.data.ToolBean
+import com.abelhu.travel.data.ToolsBeanListener
+import com.abelhu.travel.data.ToolsOperateListener
+import com.abelhu.travel.exception.NotEnoughPropertyError
+import com.abelhu.travel.exception.NotEnoughSpaceError
 import com.qicode.extension.TAG
 import com.qicode.grid.GridLayoutManager
 import java.math.BigDecimal
 import kotlin.math.max
 
-class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
+class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
     /**
      * 保存每个等级的工具已经购买的次数，需要服务器来设定
      * 注意：map需要再list之前初始化，因为list里面会根据购买的数量计算下一次购买的价格
@@ -243,6 +247,3 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
         return max
     }
 }
-
-class NotEnoughSpaceError : Exception("not enough space for tool to put")
-class NotEnoughPropertyError : Exception("not enough property for tool to buy")

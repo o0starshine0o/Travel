@@ -1,6 +1,5 @@
 package com.abelhu.travel.data
 
-import com.abelhu.travel.ui.main.ToolsInitListener
 import java.io.Serializable
 import java.math.BigDecimal
 
@@ -15,7 +14,7 @@ data class ToolBean(
     // 工具的等级
     var level: Int,
     // 初始化工具时需要的接口
-    var listener: ToolsInitListener,
+    var listener: ToolsBeanListener,
     // 工具上次产生资源的时间（单位：毫秒）
     var updateTime: Long = 0,
     // 工具每秒产生的资源数量

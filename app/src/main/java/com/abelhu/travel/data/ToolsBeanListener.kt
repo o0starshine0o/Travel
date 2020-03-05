@@ -1,9 +1,11 @@
-package com.abelhu.travel.ui.main
+package com.abelhu.travel.data
 
-import com.abelhu.travel.data.ToolBean
 import java.math.BigDecimal
 
-interface ToolsInitListener {
+/**
+ * 用于ToolBean的初始化，一般由实例化ToolBean的类实现
+ */
+interface ToolsBeanListener {
     /**
      * 更新资产的时间
      */
@@ -33,6 +35,7 @@ interface ToolsInitListener {
      * 回收价格
      */
     fun recyclePrice(toolBean: ToolBean): BigDecimal
+
     /**
      * 购买某一等级工具的次数
      */

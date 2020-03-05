@@ -1,8 +1,10 @@
-package com.abelhu.travel.ui.main
+package com.abelhu.travel.data
 
-import com.abelhu.travel.data.ToolBean
 import java.math.BigDecimal
 
+/**
+ * 对合成区域工具的操作，一般由Present层实现
+ */
 interface ToolsOperateListener {
     /**
      * 当tool被选中时
