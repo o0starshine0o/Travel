@@ -55,7 +55,10 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
         Log.i(TAG(), "add tool")
         val newTool = tool ?: ToolBean(0, 0, 1, this)
         // 如果资产不够了，需要抛出
-        if (property < newTool.buyPrice) listener.onToolsAddError(newTool, NotEnoughPropertyError())
+        if (property < newTool.buyPrice) {
+            listener.onToolsAddError(newTool, NotEnoughPropertyError())
+            return
+        }
         // 寻找放置tool的空间
         for (i in 0 until rowMax) {
             for (j in 0 until colMax) {
@@ -68,7 +71,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
                 })
             }
         }
-        listener.onToolsAddError(newTool, NotEnoughSpaceError())
+        return listener.onToolsAddError(newTool, NotEnoughSpaceError())
     }
 
     /**
