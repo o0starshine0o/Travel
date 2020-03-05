@@ -1,6 +1,7 @@
 package com.abelhu.travel.ui.main
 
 import com.abelhu.travel.data.ToolBean
+import java.math.BigDecimal
 
 interface ToolsOperateListener {
     /**
@@ -51,5 +52,5 @@ interface ToolsOperateListener {
     /**
      * 更新总资产
      */
-    fun onPropertyUpdate(now: Long)
+    fun onPropertyUpdate(now: BigDecimal)
 }

@@ -18,6 +18,7 @@ import com.qicode.extension.TAG
 import com.qicode.grid.GridDragBuilder
 import com.qicode.grid.GridLayoutManager
 import kotlinx.android.synthetic.main.item_tool.view.*
+import java.math.BigDecimal
 
 class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter.ToolsHolder>() {
 
@@ -70,13 +71,13 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
                 Log.i(TAG(), "propertyShow tools[${row}, ${col}]")
                 // 计算产生的资源
                 val current = System.currentTimeMillis()
-                val resource = ((current - update) / 1000 * property * coefficient).toLong()
-                if (resource > 0) {
+                val resource = BigDecimal((current - updateTime) / 1000) * propertyPerSecond * coefficient
+                if (resource > BigDecimal.ZERO) {
                     // 更新tool
-                    update = current
+                    updateTime = current
                     tools.addProperty(resource)
                     // 更新显示
-                    view.property.text = view.context.resources.getString(R.string.add_resource, resource)
+                    view.property.text = view.context.resources.getString(R.string.add_resource, ToolBean.showText(resource))
                     view.propertyContainer.visibility = View.VISIBLE
                     // 启动动画
                     animator.setTarget(view.propertyContainer)

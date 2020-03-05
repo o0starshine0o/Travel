@@ -2,7 +2,7 @@ package com.abelhu.travel.data
 
 import com.abelhu.travel.ui.main.ToolsInitListener
 import java.io.Serializable
-import kotlin.math.pow
+import java.math.BigDecimal
 
 /**
  * Created by admin on 2020-02-28
@@ -16,41 +16,57 @@ data class ToolBean(
     var level: Int,
     // 初始化工具时需要的接口
     var listener: ToolsInitListener,
-    // 基础价格
-    var basePrice: Long = 0,
-    // 购买价格
-    var buyPrice: Long = 0,
-    // 回收价格
-    var recyclePrice: Long = 0,
-    // 工具上次产生资源的时间
-    var update: Long = 0,
+    // 工具上次产生资源的时间（单位：毫秒）
+    var updateTime: Long = 0,
     // 工具每秒产生的资源数量
-    var property: Int = 0,
+    var propertyPerSecond: BigDecimal = BigDecimal.ZERO,
+    // 基础价格
+    var basePrice: BigDecimal = BigDecimal.ZERO,
+    // 购买价格
+    var buyPrice: BigDecimal = BigDecimal.ZERO,
+    // 回收价格
+    var recyclePrice: BigDecimal = BigDecimal.ZERO,
     // 工具每秒产生资源数量的系数
-    var coefficient: Float = 1f,
+    var coefficient: BigDecimal = BigDecimal.ONE,
     // 工具是否在界面内可见（如果不可见，表示在缓存队列）
     var visibility: Boolean = true
 ) : Serializable {
-    init {
-        update = System.currentTimeMillis()
-        property = (4 * 2.05.pow(level - 1)).toInt()
-        basePrice = when (level) {
-            1 -> 100
-            2 -> 1500
-            3 -> 67500
-            else -> 6750 * 2.66.pow(level - 3).toLong()
+    companion object {
+        /**
+         * 计算最终要展示的字符
+         */
+        fun showText(value: BigDecimal): String {
+            var c = 'a' - 1
+            var all = value
+            while (all / BigDecimal(10000) >= BigDecimal.ONE) {
+                all /= BigDecimal(10000)
+                c += 1
+            }
+            return if (c == 'a' - 1) "${all.setScale(0)}" else "${all.setScale(2)}$c$c"
         }
-        buyPrice = when (level) {
-            1, 2 -> (basePrice * 1.07.pow(listener.buyCount(level) - 1)).toLong()
-            else -> (basePrice * 1.17.pow(listener.buyCount(level) - 1)).toLong()
-        }
-        recyclePrice = (0.1 * basePrice).toLong()
-        coefficient = listener.coefficient()
     }
 
+    init {
+        // 更新的时间需要根据接口确定
+        updateTime = listener.updateTime(this)
+        // 每秒产生资源数量的系数，需要根据用户的行为来确定，一旦更改要应用到所有的实例
+        coefficient = listener.coefficient(this)
+        // 要转换成BigDecimal类型
+        propertyPerSecond = listener.propertyPerSecond(this)
+        // 要转换成BigDecimal类型
+        basePrice = listener.basePrice(this)
+        // 要转换成BigDecimal类型
+        buyPrice = listener.buyPrice(this)
+        // 要转换成BigDecimal类型
+        recyclePrice = listener.recyclePrice(this)
+    }
+
+    /**
+     * 当执行合并操作时
+     */
     fun addLevel() {
         level++
-        property = (4 * 2.05.pow(level - 1)).toInt()
+        propertyPerSecond = listener.propertyPerSecond(this)
     }
 
 }

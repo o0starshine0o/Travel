@@ -5,15 +5,15 @@ import android.util.SparseIntArray
 import com.abelhu.travel.data.ToolBean
 import com.qicode.extension.TAG
 import com.qicode.grid.GridLayoutManager
+import java.math.BigDecimal
 import kotlin.math.max
-import kotlin.math.pow
 
 class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
     /**
      * 保存每个等级的工具已经购买的次数，需要服务器来设定
      * 注意：map需要再list之前初始化，因为list里面会根据购买的数量计算下一次购买的价格
      */
-    val map = SparseIntArray(16).apply {
+    private val map = SparseIntArray(16).apply {
         put(1, 10)
         put(2, 10)
         put(3, 10)
@@ -24,7 +24,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
      * 生成资产的系数
      * 注意：coefficient需要再list之前初始化，因为list里面会使用到coefficient
      */
-    var coefficient = 1.0f
+    var coefficient: BigDecimal = BigDecimal.ONE
         set(value) {
             field = value
             list.forEach { it.coefficient = field }
@@ -36,14 +36,14 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
     /**
      * 用户的总资产
      */
-    var property = 0L
+    var property = BigDecimal("100")
 
     /**
      * 增加总资产
      * 防止多线程造成的计算错误
      */
     @Synchronized
-    fun addProperty(value: Long) {
+    fun addProperty(value: BigDecimal) {
         property += value
         listener.onPropertyUpdate(property)
     }
@@ -77,9 +77,9 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
     /**
      * 产生资产的速率
      */
-    fun getSpeed(): Long {
-        var result = 0L
-        list.forEach { if (it.visibility) result += (it.property * it.coefficient).toLong() }
+    fun getSpeed(): BigDecimal {
+        var result = BigDecimal.ZERO
+        list.forEach { if (it.visibility) result += it.propertyPerSecond * it.coefficient }
         return result
     }
 
@@ -89,10 +89,10 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
             in 0..5 -> ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, 1, this)
             else -> {
                 var targetLevel = Int.MAX_VALUE
-                var maxPrice = Double.MIN_VALUE
+                var maxPrice = BigDecimal.ZERO
                 for (level in max(maxLevel - 10, 1)..(maxLevel - 4)) {
-                    val result = ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, level, this).buyPrice * (2.0.pow(7 - level))
-                    if (result > maxPrice && result <= property) {
+                    val result = ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, level, this).buyPrice * BigDecimal(2).pow(7 - level)
+                    if (maxPrice == BigDecimal.ZERO || result > maxPrice && result <= property) {
                         maxPrice = result
                         targetLevel = level
                     }
@@ -100,19 +100,6 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
                 ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, targetLevel, this)
             }
         }
-    }
-
-    /**
-     * 计算最终要展示的字符
-     */
-    fun showText(value: Long): String {
-        var c = 'a' - 1
-        var all = value.toFloat()
-        while (all / 10000 >= 1) {
-            all /= 10000
-            c += 1
-        }
-        return if (c == 'a' - 1) "${all.toInt()}" else "${String.format("%.2f", all)}$c$c"
     }
 
     /**
@@ -146,9 +133,52 @@ class Tools(val listener: ToolsOperateListener) : ToolsInitListener {
         }
     }
 
+    /**
+     * 更新资产的时间
+     */
+    override fun updateTime(toolBean: ToolBean) = System.currentTimeMillis()
+
+    /**
+     * 某一个等级的工具的购买数量
+     */
     override fun buyCount(level: Int) = map[level, 0]
 
-    override fun coefficient() = coefficient
+    /**
+     * 每秒产生资源数量的系数
+     */
+    override fun coefficient(toolBean: ToolBean) = coefficient
+
+    /**
+     * 根据文档来的: 4 * 2.05.pow(level - 1)
+     */
+    override fun propertyPerSecond(toolBean: ToolBean) = BigDecimal(4) * BigDecimal("2.05").pow(toolBean.level - 1)
+
+    /**
+     * 根据文档来的: 6750 * 2.66.pow(level - 3)
+     */
+    override fun basePrice(toolBean: ToolBean) = when (toolBean.level) {
+        1 -> BigDecimal(100)
+        2 -> BigDecimal(1500)
+        3 -> BigDecimal(67500)
+        else -> BigDecimal(6750) * BigDecimal("2.66").pow(toolBean.level - 3)
+    }
+
+    /**
+     * 根据文档来的:
+     * basePrice * 1.07.pow(listener.buyCount(level) - 1)
+     * basePrice * 1.17.pow(listener.buyCount(level) - 1)
+     */
+    override fun buyPrice(toolBean: ToolBean): BigDecimal {
+        return when (toolBean.level) {
+            1, 2 -> toolBean.basePrice * BigDecimal("1.07").pow(buyCount(toolBean.level) - 1)
+            else -> toolBean.basePrice * BigDecimal("1.17").pow(buyCount(toolBean.level) - 1)
+        }
+    }
+
+    /**
+     * 根据文档来的: 0.1 * basePrice
+     */
+    override fun recyclePrice(toolBean: ToolBean) = BigDecimal("0.1") * toolBean.basePrice
 
     /**
      * 根据行列来寻找工具

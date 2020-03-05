@@ -26,6 +26,7 @@ import com.qicode.grid.GridLayoutDrawable
 import com.qicode.grid.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
+import java.math.BigDecimal
 
 class MainFragment : Fragment(), ToolsOperateListener {
 
@@ -51,7 +52,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 当占位控件得到位置信息后再设置toolsContainer
             toolsContainer.post { initToolsContainer(toolsContainer) }
             // 临时添加监听事件
-            speedup.setOnClickListener { speedUp(if (myTools.coefficient > 1.0001) 1.0f else 2.0f) }
+            speedup.setOnClickListener { speedUp(if (myTools.coefficient > BigDecimal.ONE) BigDecimal.ONE else BigDecimal(2)) }
             // 设置拖拽监听
             setOnDragListener { _, event ->
                 // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
@@ -99,7 +100,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
         toolsContainer.setItemViewCacheSize(0)
         // 设置资产
         onPropertyUpdate(myTools.property)
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.showText(myTools.getSpeed()))
         // 快速购买
         quick.setOnClickListener { myTools.addTool(myTools.getQuickTool()) }
         shakeAnimator.setTarget(quick)
@@ -133,12 +134,12 @@ class MainFragment : Fragment(), ToolsOperateListener {
         recycle.visibility = View.INVISIBLE
     }
 
-    private fun speedUp(coefficient: Float) {
+    private fun speedUp(coefficient: BigDecimal) {
         myTools.coefficient = coefficient
         // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.showText(myTools.getSpeed()))
         // 界面展示
-        if (myTools.coefficient > 1.00001) {
+        if (myTools.coefficient > BigDecimal.ONE) {
             // 加速
             speedup.text = speedup.context.resources.getString(R.string.speedup_with, coefficient)
             speed.setTextColor(Color.GREEN)
@@ -185,7 +186,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
     override fun onToolsAdd(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
         // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemInserted(index)
         // 更新快速购买
         updateQuickAdd()
@@ -204,7 +205,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
     override fun onToolsRecycle(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsRecycle")
         // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.showText(myTools.getSpeed()))
         toolsContainer.adapter.notifyItemRemoved(index)
         // 更新快速购买
         updateQuickAdd()
@@ -229,7 +230,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
     override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsMerge")
         // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, myTools.showText(myTools.getSpeed()))
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.showText(myTools.getSpeed()))
         // 更新快速购买
         updateQuickAdd()
         toolsContainer.adapter.notifyItemRemoved(tools[0].first)
@@ -242,9 +243,9 @@ class MainFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
 
-    override fun onPropertyUpdate(now: Long) {
+    override fun onPropertyUpdate(now: BigDecimal) {
         // 如果展示的字符和当前的字符不一样，显示心跳动画
-        myTools.showText(now).takeIf { it != property?.text }?.apply {
+        ToolBean.showText(now).takeIf { it != property?.text }?.apply {
             property.text = this
             beatAnimator.cancel()
             beatAnimator.setTarget(property)
