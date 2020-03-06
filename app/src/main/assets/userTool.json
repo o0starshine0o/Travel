@@ -7,9 +7,29 @@
         "itemBuyStyle": 1,
         "itemGoldPrice": "1.11e",
         "itemRedPacketPrice": 100,
-        "itemGoldGenerateSpeed": "100.3w"
+        "itemGoldGenerateSpeed": "4"
       },
       "index": 0
+    },
+    {
+      "item": {
+        "itemId": 2,
+        "itemBuyStyle": 1,
+        "itemGoldPrice": "1.11e",
+        "itemRedPacketPrice": 100,
+        "itemGoldGenerateSpeed": "8"
+      },
+      "index": 4
+    },
+    {
+      "item": {
+        "itemId": 3,
+        "itemBuyStyle": 1,
+        "itemGoldPrice": "1.11e",
+        "itemRedPacketPrice": 100,
+        "itemGoldGenerateSpeed": "16"
+      },
+      "index": 8
     }
   ],
   "produceQuick": {
