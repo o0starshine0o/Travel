@@ -1,16 +1,23 @@
-package com.abelhu.travel.ui.main
+package com.qicode.merge.data
 
 import android.util.Log
 import com.qicode.extension.TAG
-import com.qicode.grid.GridLayoutManager
-import com.qicode.merge.data.ToolBean
-import com.qicode.merge.data.ToolsBeanListener
-import com.qicode.merge.data.ToolsOperateListener
 import com.qicode.merge.exception.NotEnoughSpaceError
 import java.math.BigDecimal
-import kotlin.math.max
 
 abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
+
+    companion object {
+        // 约定（-1， -1）表示增加tool
+        val ADD = intArrayOf(-1, -1)
+        // 约定（-2， -2）表示删除tool
+        val RECYCLE = intArrayOf(-2, -2)
+        // 约定（-3， -3）表示取消tool的操作
+        val CANCEL = intArrayOf(-3, -3)
+        // 其他约定，比如更换工具
+        val APPLY = intArrayOf(-100, -100)
+    }
+
 
     /**
      * 保存所有的工具，需要服务器来设定
@@ -26,10 +33,6 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
             field = value
             getList().forEach { it.coefficient = field }
         }
-//    /**
-//     * 保存所有的工具，需要服务器来设定
-//     */
-//    val list = MutableList(10) { i -> ToolBean(this, i / 4, i % 4, 30) }
 
     /**
      * 用户的总资产(精确值）
@@ -114,11 +117,11 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
         // 判断是否是约定的特殊位置
         when {
             // 取消对tool的操作
-            intArrayOf(row, col).contentEquals(GridLayoutManager.CANCEL) -> listener.onToolsCancel(index, origin)
+            intArrayOf(row, col).contentEquals(CANCEL) -> listener.onToolsCancel(index, origin)
             // 删除这个tool
-            intArrayOf(row, col).contentEquals(GridLayoutManager.RECYCLE) -> listener.onToolsRecycle(index, recycleTool(origin))
+            intArrayOf(row, col).contentEquals(RECYCLE) -> listener.onToolsRecycle(index, recycleTool(origin))
             // 将这个tool应用到某个地方
-            intArrayOf(row, col).contentEquals(GridLayoutManager.APPLY) -> listener.onToolsApply(index, origin)
+            intArrayOf(row, col).contentEquals(APPLY) -> listener.onToolsApply(index, origin)
             else -> {
                 val target = getTool(row, col)
                 when {
@@ -144,11 +147,6 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
      * 每秒产生资源数量的系数
      */
     override fun coefficient(toolBean: ToolBean) = coefficient
-
-//    /**
-//     * 根据文档来的: 4 * 2.05.pow(level - 1)
-//     */
-//    override fun propertyPerSecond(toolBean: ToolBean) = BigDecimal(4) * BigDecimal("2.05").pow(toolBean.level - 1)
 
     /**
      * 根据文档来的: 6750 * 2.66.pow(level - 3)
@@ -217,14 +215,5 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
         getList().remove(origin)
         addProperty(origin.recyclePrice)
         return origin
-    }
-
-    /**
-     * 获取最高的等级
-     */
-    private fun maxLevel(): Int {
-        var max = 0
-        getList().forEach { max = max(max, it.level) }
-        return max
     }
 }

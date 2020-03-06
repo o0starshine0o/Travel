@@ -10,30 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import com.qicode.extension.TAG
 
-typealias GridLayoutListener = (position: Array<Array<FloatArray>>, itemWidth: Float, itemHeight: Float) -> Unit
+typealias GridFinish = (position: Array<Array<FloatArray>>, itemWidth: Float, itemHeight: Float) -> Unit
 
-class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, private val listener: GridLayoutListener? = null) : RecyclerView.LayoutManager() {
-
-    companion object {
-        // 约定（-1， -1）表示增加tool
-        val ADD = intArrayOf(-1, -1)
-        // 约定（-2， -2）表示删除tool
-        val RECYCLE = intArrayOf(-2, -2)
-        // 约定（-3， -3）表示取消tool的操作
-        val CANCEL = intArrayOf(-3, -3)
-        // 其他约定，比如更换工具
-        val APPLY = intArrayOf(-100, -100)
-    }
-
+class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, private val onGridFinish: GridFinish? = null) : RecyclerView.LayoutManager() {
     /**
      * 应用的区域，拖拽到这里面表示应用tool
      */
     var applyRect = Rect()
+    var apply: IntArray? = null
 
     /**
      * 回收的区域，拖拽到这里面表示回收tool
      */
     var recycleRect = Rect()
+    var recycle: IntArray? = null
+
+    var cancel: IntArray? = null
 
     /**
      * 使用二维数组保存绘制位置的左上角信息(top,left)，相对于本控件而言
@@ -49,8 +41,10 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
     private var itemHeight = 0f
 
     fun getRowCol(x: Float, y: Float, result: (row: Int, col: Int) -> Unit) {
-        applyRect.apply { if (contains(x.toInt(), y.toInt())) return result.invoke(APPLY[0], APPLY[1]) }
-        recycleRect.apply { if (contains(x.toInt(), y.toInt())) return result.invoke(RECYCLE[0], RECYCLE[1]) }
+        // 应用
+        applyRect.apply { if (contains(x.toInt(), y.toInt())) apply?.apply { return result.invoke(this[0], this[1]) } }
+        // 回收
+        recycleRect.apply { if (contains(x.toInt(), y.toInt())) recycle?.apply { return result.invoke(this[0], this[1]) } }
         for (i in position.indices) {
             for (j in position[i].indices) {
                 if (RectF().apply {
@@ -59,13 +53,12 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
                         right = left + itemWidth
                         bottom = top + itemHeight
                     }.contains(x, y)) {
-                    result.invoke(i, j)
-                    return
+                    return result.invoke(i, j)
                 }
             }
         }
-        // TODO，添加删除的操作
-        return result.invoke(APPLY[0], APPLY[1])
+        // 没有找到对应的区域，取消操作
+        cancel?.apply { return result.invoke(this[0], this[1]) }
     }
 
     override fun generateDefaultLayoutParams() = LayoutParams(itemWidth.toInt(), itemHeight.toInt())
@@ -85,7 +78,7 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
                 Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
             }
         }
-        listener?.invoke(position, itemWidth, itemHeight)
+        onGridFinish?.invoke(position, itemWidth, itemHeight)
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {

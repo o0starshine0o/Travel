@@ -26,6 +26,7 @@ import com.qicode.extension.dp
 import com.qicode.grid.GridLayoutDrawable
 import com.qicode.grid.GridLayoutManager
 import com.qicode.merge.data.ToolBean
+import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
 import com.qicode.merge.exception.NotEnoughPropertyError
 import com.qicode.merge.exception.NotEnoughSpaceError
@@ -88,14 +89,18 @@ class MainFragment : Fragment(), ToolsOperateListener {
                 top -= toolsPosition[1]
                 bottom -= toolsPosition[1]
             }
+            apply = Tools.APPLY
             // 设置recycle的区域，以toolsContainer的左上角为原点
-            recycle.getGlobalVisibleRect(recycleRect)
+            recycleContainer.getGlobalVisibleRect(recycleRect)
             recycleRect.apply {
                 left -= toolsPosition[0]
                 right -= toolsPosition[0]
                 top -= toolsPosition[1]
                 bottom -= toolsPosition[1]
             }
+            recycle = Tools.RECYCLE
+            // 设置取消区域
+            cancel = Tools.CANCEL
         }
         toolsContainer.adapter = ToolsAdapter(userTool)
         // 去掉item的各种动画
@@ -140,7 +145,7 @@ class MainFragment : Fragment(), ToolsOperateListener {
             userTool.operateTool(index, i, j)
         }
         // 隐藏回收站
-        recycle.visibility = View.INVISIBLE
+        recycleContainer.visibility = View.INVISIBLE
     }
 
     /**
@@ -168,9 +173,10 @@ class MainFragment : Fragment(), ToolsOperateListener {
     override fun onToolsSelect(index: Int) {
         Log.i(TAG(), "onToolsSelect: $index")
         // 更新回收站文本
-        recycle.recycleText.text = recycle.context.resources.getString(R.string.recycle_property, ToolBean.getText(userTool.getList()[index].recyclePrice))
+        recycleContainer.recycleText.text =
+            recycleContainer.context.resources.getString(R.string.recycle_property, ToolBean.getText(userTool.getList()[index].recyclePrice))
         // 显示回收站
-        recycle.visibility = View.VISIBLE
+        recycleContainer.visibility = View.VISIBLE
     }
 
     override fun onToolsCancel(index: Int, tool: ToolBean) {

@@ -17,6 +17,7 @@ import com.qicode.extension.TAG
 import com.qicode.grid.GridDragBuilder
 import com.qicode.grid.GridLayoutManager
 import com.qicode.merge.data.ToolBean
+import com.qicode.merge.data.Tools
 import kotlinx.android.synthetic.main.item_tool.view.*
 import java.math.BigDecimal
 

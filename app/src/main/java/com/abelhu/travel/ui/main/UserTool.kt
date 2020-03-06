@@ -1,6 +1,7 @@
 package com.abelhu.travel.ui.main
 
 import com.qicode.merge.data.ToolBean
+import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
 import java.math.BigDecimal
 

@@ -209,7 +209,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/recycle"
+                android:id="@+id/recycleContainer"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/round_rect_gray"
