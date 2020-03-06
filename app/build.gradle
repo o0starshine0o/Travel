@@ -36,6 +36,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     // animate
     implementation 'com.airbnb.android:lottie:2.7.0'
+    // json解析
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     // 工具类
     implementation 'com.github.qicodes:utils:1.2.7'

@@ -1,29 +1,22 @@
 package com.abelhu.travel.ui.main
 
 import android.util.Log
-import android.util.SparseIntArray
 import com.abelhu.travel.data.ToolBean
 import com.abelhu.travel.data.ToolsBeanListener
 import com.abelhu.travel.data.ToolsOperateListener
-import com.abelhu.travel.exception.NotEnoughPropertyError
 import com.abelhu.travel.exception.NotEnoughSpaceError
 import com.qicode.extension.TAG
 import com.qicode.grid.GridLayoutManager
 import java.math.BigDecimal
 import kotlin.math.max
 
-class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
+abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
+
     /**
-     * 保存每个等级的工具已经购买的次数，需要服务器来设定
-     * 注意：map需要再list之前初始化，因为list里面会根据购买的数量计算下一次购买的价格
+     * 保存所有的工具，需要服务器来设定
      */
-    private val map = SparseIntArray(16).apply {
-        put(1, 10)
-        put(2, 10)
-        put(3, 10)
-        put(4, 10)
-        put(5, 10)
-    }
+    abstract fun getList(): MutableList<ToolBean>
+
     /**
      * 生成资产的系数
      * 注意：coefficient需要再list之前初始化，因为list里面会使用到coefficient
@@ -31,14 +24,15 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
     var coefficient: BigDecimal = BigDecimal.ONE
         set(value) {
             field = value
-            list.forEach { it.coefficient = field }
+            getList().forEach { it.coefficient = field }
         }
+//    /**
+//     * 保存所有的工具，需要服务器来设定
+//     */
+//    val list = MutableList(10) { i -> ToolBean(this, i / 4, i % 4, 30) }
+
     /**
-     * 保存所有的工具，需要服务器来设定
-     */
-    val list = MutableList(10) { i -> ToolBean(i / 4, i % 4, 30, this) }
-    /**
-     * 用户的总资产
+     * 用户的总资产(精确值）
      */
     var property = BigDecimal("100")
 
@@ -57,21 +51,21 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      */
     fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
         Log.i(TAG(), "add tool with level: ${tool?.level}")
-        val newTool = tool ?: ToolBean(0, 0, 1, this)
-        // 如果资产不够了，需要抛出
-        if (property < newTool.buyPrice) {
-            listener.onToolsAddError(newTool, NotEnoughPropertyError())
-            return
-        }
+        val newTool = tool ?: ToolBean(this, level = 1)
+//        // 如果资产不够了，需要抛出
+//        if (property < newTool.buyPrice) {
+//            listener.onToolsAddError(newTool, NotEnoughPropertyError())
+//            return
+//        }
         // 寻找放置tool的空间
         for (i in 0 until rowMax) {
             for (j in 0 until colMax) {
-                if (getTool(i, j) == null) return listener.onToolsAdd(list.size + 1, newTool.apply {
+                if (getTool(i, j) == null) return listener.onToolsAdd(getList().size + 1, newTool.apply {
                     row = i
                     col = j
-                    list.add(this)
-                    // 需要减去需要的费用
-                    this@Tools.addProperty(-buyPrice)
+                    getList().add(this)
+//                    // 需要减去需要的费用
+//                    this@Tools.addProperty(-buyPrice)
                 })
             }
         }
@@ -83,27 +77,31 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      */
     fun getSpeed(): BigDecimal {
         var result = BigDecimal.ZERO
-        list.forEach { if (it.visibility) result += it.propertyPerSecond * it.coefficient }
+        getList().forEach { if (it.visibility) result += it.propertyPer * it.coefficient }
         return result
     }
 
+    /**
+     * 获取快速购买按钮对应的工具
+     */
     fun getQuickTool(): ToolBean {
-        val maxLevel = maxLevel()
-        return when (maxLevel) {
-            in 0..5 -> ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, 1, this)
-            else -> {
-                var targetLevel = Int.MAX_VALUE
-                var maxPrice = BigDecimal.ZERO
-                for (level in max(maxLevel - 10, 1)..(maxLevel - 4)) {
-                    val result = ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, level, this).buyPrice * BigDecimal(2).pow(max(0, 7 - level))
-                    if (maxPrice == BigDecimal.ZERO || result > maxPrice && result <= property) {
-                        maxPrice = result
-                        targetLevel = level
-                    }
-                }
-                ToolBean(Int.MIN_VALUE, Int.MIN_VALUE, targetLevel, this)
-            }
-        }
+        return ToolBean(this, level = 1)
+//        val maxLevel = maxLevel()
+//        return when (maxLevel) {
+//            in 0..5 -> ToolBean(this, level = 1)
+//            else -> {
+//                var targetLevel = Int.MAX_VALUE
+//                var maxPrice = BigDecimal.ZERO
+//                for (level in max(maxLevel - 10, 1)..(maxLevel - 4)) {
+//                    val result = ToolBean(this, level = level).buyPrice * BigDecimal(2).pow(max(0, 7 - level))
+//                    if (maxPrice == BigDecimal.ZERO || result > maxPrice && result <= property) {
+//                        maxPrice = result
+//                        targetLevel = level
+//                    }
+//                }
+//                ToolBean(this, level = targetLevel)
+//            }
+//        }
     }
 
     /**
@@ -111,8 +109,8 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      */
     fun operateTool(index: Int, row: Int, col: Int) {
         // 获取原始的（操作的）tool
-        if (index >= list.size || index < 0) return
-        val origin = list[index]
+        if (index >= getList().size || index < 0) return
+        val origin = getList()[index]
         // 判断是否是约定的特殊位置
         when {
             // 取消对tool的操作
@@ -143,11 +141,6 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
     override fun updateTime(toolBean: ToolBean) = System.currentTimeMillis()
 
     /**
-     * 某一个等级的工具的购买数量
-     */
-    override fun buyCount(level: Int) = map[level, 0]
-
-    /**
      * 每秒产生资源数量的系数
      */
     override fun coefficient(toolBean: ToolBean) = coefficient
@@ -168,18 +161,6 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
     }
 
     /**
-     * 根据文档来的:
-     * basePrice * 1.07.pow(listener.buyCount(level) - 1)
-     * basePrice * 1.17.pow(listener.buyCount(level) - 1)
-     */
-    override fun buyPrice(toolBean: ToolBean): BigDecimal {
-        return when (toolBean.level) {
-            1, 2 -> toolBean.basePrice * BigDecimal("1.07").pow(max(0, buyCount(toolBean.level) - 1))
-            else -> toolBean.basePrice * BigDecimal("1.17").pow(max(0, buyCount(toolBean.level) - 1))
-        }
-    }
-
-    /**
      * 根据文档来的: 0.1 * basePrice
      */
     override fun recyclePrice(toolBean: ToolBean) = BigDecimal("0.1") * toolBean.basePrice
@@ -188,7 +169,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      * 根据行列来寻找工具
      */
     private fun getTool(row: Int, col: Int): Pair<Int, ToolBean>? {
-        for ((index, tool) in list.withIndex()) if (tool.row == row && tool.col == col) return (index to tool)
+        for ((index, tool) in getList().withIndex()) if (tool.row == row && tool.col == col) return (index to tool)
         return null
     }
 
@@ -207,10 +188,10 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      */
     private fun mergeTool(origin: Pair<Int, ToolBean>, target: Pair<Int, ToolBean>): List<Pair<Int, ToolBean>> {
         Log.i(TAG(), "merge tool [${origin.second.row}, ${origin.second.col}] -> [${target.second.row}, ${target.second.col}]")
-        list.remove(origin.second)
+        getList().remove(origin.second)
         target.second.addLevel()
         // 移除origin的时候，list的结构发生了改变，需要重新获取target的索引
-        return listOf(origin, (list.indexOf(target.second) to target.second))
+        return listOf(origin, (getList().indexOf(target.second) to target.second))
     }
 
     /**
@@ -233,7 +214,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      * 注意：需要补充对应的回收价格
      */
     private fun recycleTool(origin: ToolBean): ToolBean {
-        list.remove(origin)
+        getList().remove(origin)
         addProperty(origin.recyclePrice)
         return origin
     }
@@ -243,7 +224,7 @@ class Tools(val listener: ToolsOperateListener) : ToolsBeanListener {
      */
     private fun maxLevel(): Int {
         var max = 0
-        list.forEach { max = max(max, it.level) }
+        getList().forEach { max = max(max, it.level) }
         return max
     }
 }

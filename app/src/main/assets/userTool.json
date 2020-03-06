@@ -1,0 +1,20 @@
+{
+  "gold": "11.11e",
+  "items": [
+    {
+      "item": {
+        "itemId": 1,
+        "itemBuyStyle": 1,
+        "itemGoldPrice": "1.11e",
+        "itemRedPacketPrice": 100,
+        "itemGoldGenerateSpeed": "100.3w"
+      },
+      "index": 0
+    }
+  ],
+  "produceQuick": {
+    "start": 1583224553,
+    "times": 120,
+    "param": 80
+  }
+}

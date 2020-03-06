@@ -22,13 +22,13 @@ import java.math.BigDecimal
 
 class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter.ToolsHolder>() {
 
-    override fun getItemCount() = tools.list.size
+    override fun getItemCount() = tools.getList().size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false))
 
     override fun onBindViewHolder(holder: ToolsHolder, position: Int) {
-        holder.onBind(tools.list[position])
+        holder.onBind(tools.getList()[position])
     }
 
     override fun onViewRecycled(holder: ToolsHolder) {
@@ -58,7 +58,7 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
             view.setOnTouchListener { _, event ->
                 when (event.action) {
                     // 注意：bind时候的position和drag时候的position可能已经由于（merge、delete、add等操作）不一样了，这里需要重新获取下目前的索引
-                    MotionEvent.ACTION_DOWN -> drag(event, tools.list.indexOf(bean))
+                    MotionEvent.ACTION_DOWN -> drag(event, tools.getList().indexOf(bean))
                     else -> false
                 }
             }
@@ -71,13 +71,13 @@ class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsAdapter
                 Log.i(TAG(), "propertyShow tools[${row}, ${col}]")
                 // 计算产生的资源
                 val current = System.currentTimeMillis()
-                val resource = BigDecimal((current - updateTime) / 1000) * propertyPerSecond * coefficient
+                val resource = BigDecimal((current - updateTime) / 1000) * propertyPer * coefficient
                 if (resource > BigDecimal.ZERO) {
                     // 更新tool
                     updateTime = current
                     tools.addProperty(resource)
                     // 更新显示
-                    view.property.text = view.context.resources.getString(R.string.add_resource, ToolBean.showText(resource))
+                    view.property.text = view.context.resources.getString(R.string.add_resource, ToolBean.getText(resource))
                     view.propertyContainer.visibility = View.VISIBLE
                     // 启动动画
                     animator.setTarget(view.propertyContainer)

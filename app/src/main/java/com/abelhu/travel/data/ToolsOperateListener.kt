@@ -55,4 +55,9 @@ interface ToolsOperateListener {
      * 更新总资产
      */
     fun onPropertyUpdate(now: BigDecimal)
+
+    /**
+     * 更改生成资产的系数
+     */
+    fun onCoefficient(coefficient: BigDecimal)
 }
