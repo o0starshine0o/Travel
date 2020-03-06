@@ -45,4 +45,6 @@ dependencies {
     implementation project(path: ':GridView')
     // 无限循环滚动的Drawable
     implementation project(path: ':CycleDrawable')
+    // 合成玩法
+    implementation project(path: ':Merge')
 }

@@ -17,10 +17,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.abelhu.travel.R
-import com.abelhu.travel.data.ToolBean
-import com.abelhu.travel.data.ToolsOperateListener
-import com.abelhu.travel.exception.NotEnoughPropertyError
-import com.abelhu.travel.exception.NotEnoughSpaceError
 import com.abelhu.travel.utils.getJson
 import com.google.gson.Gson
 import com.qicode.cycle.CycleBitmap
@@ -29,6 +25,10 @@ import com.qicode.extension.TAG
 import com.qicode.extension.dp
 import com.qicode.grid.GridLayoutDrawable
 import com.qicode.grid.GridLayoutManager
+import com.qicode.merge.data.ToolBean
+import com.qicode.merge.data.ToolsOperateListener
+import com.qicode.merge.exception.NotEnoughPropertyError
+import com.qicode.merge.exception.NotEnoughSpaceError
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import java.math.BigDecimal

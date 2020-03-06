@@ -1,4 +1,4 @@
-package com.abelhu.travel.data
+package com.qicode.merge.data
 
 import java.math.BigDecimal
 

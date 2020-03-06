@@ -13,10 +13,10 @@ import android.view.View
 import android.view.View.DRAG_FLAG_OPAQUE
 import android.view.ViewGroup
 import com.abelhu.travel.R
-import com.abelhu.travel.data.ToolBean
 import com.qicode.extension.TAG
 import com.qicode.grid.GridDragBuilder
 import com.qicode.grid.GridLayoutManager
+import com.qicode.merge.data.ToolBean
 import kotlinx.android.synthetic.main.item_tool.view.*
 import java.math.BigDecimal
 

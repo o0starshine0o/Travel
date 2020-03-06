@@ -1,4 +1,4 @@
-package com.abelhu.travel.data
+package com.qicode.merge.data
 
 import java.math.BigDecimal
 
@@ -15,11 +15,6 @@ interface ToolsBeanListener {
      * 获取当前的生产资源系数
      */
     fun coefficient(toolBean: ToolBean): BigDecimal
-
-//    /**
-//     * 每秒产生的资源数量
-//     */
-//    fun propertyPerSecond(toolBean: ToolBean): BigDecimal
 
     /**
      * 基础价格

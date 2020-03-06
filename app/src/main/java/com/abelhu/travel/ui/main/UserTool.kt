@@ -1,7 +1,7 @@
 package com.abelhu.travel.ui.main
 
-import com.abelhu.travel.data.ToolBean
-import com.abelhu.travel.data.ToolsOperateListener
+import com.qicode.merge.data.ToolBean
+import com.qicode.merge.data.ToolsOperateListener
 import java.math.BigDecimal
 
 /**
