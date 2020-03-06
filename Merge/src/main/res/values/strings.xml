@@ -4,5 +4,11 @@
     <string name="quick_buy">快速购买</string>
     <string name="speedup">加速</string>
     <string name="speedup_with">X(%1$f)</string>
-    <string name="recycle_property">回收可得 %1$d</string>
+    <string name="recycle_property">回收可得 %1$s</string>
+
+
+    <string name="add_resource">+%1$s</string>
+    <string name="per_second">%1$s/秒</string>
+    <string name="recycler_tip">位置满了，请合成或回收场上工具</string>
+    <string name="property_tip">资源不够，TODO</string>
 </resources>

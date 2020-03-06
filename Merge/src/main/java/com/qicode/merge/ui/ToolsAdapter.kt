@@ -1,17 +1,16 @@
-package com.abelhu.travel.ui.main
+package com.qicode.merge.ui
 
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.abelhu.travel.R
 import com.qicode.extension.TAG
+import com.qicode.merge.R
 import com.qicode.merge.data.Tools
-import com.qicode.merge.ui.ToolsHolder
 
-class ToolsAdapter(private val tools: Tools) : RecyclerView.Adapter<ToolsHolder>() {
+class ToolsAdapter(private val tools: Tools?) : RecyclerView.Adapter<ToolsHolder>() {
 
-    override fun getItemCount() = tools.getList().size
+    override fun getItemCount() = tools?.getList()?.size ?: 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false))

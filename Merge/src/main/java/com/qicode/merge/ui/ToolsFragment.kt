@@ -1,9 +1,8 @@
-package com.abelhu.travel.ui.main
+package com.qicode.merge.ui
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -16,53 +15,53 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.abelhu.travel.R
-import com.abelhu.travel.utils.getJson
-import com.google.gson.Gson
-import com.qicode.cycle.CycleBitmap
-import com.qicode.cycle.CycleDrawable
+//import com.qicode.cycle.CycleBitmap
+//import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.TAG
 import com.qicode.extension.dp
 import com.qicode.grid.GridLayoutDrawable
 import com.qicode.grid.GridLayoutManager
+import com.qicode.merge.R
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
 import com.qicode.merge.exception.NotEnoughPropertyError
 import com.qicode.merge.exception.NotEnoughSpaceError
-import com.qicode.merge.ui.ToolsAdapter
-import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.fragment_main.view.*
+import kotlinx.android.synthetic.main.fragment_tools.*
+import kotlinx.android.synthetic.main.fragment_tools.view.*
 import java.math.BigDecimal
 
 
-class MainFragment : Fragment(), ToolsOperateListener {
+open class ToolsFragment : Fragment(), ToolsOperateListener {
 
-    private lateinit var userTool: UserTool
+    //    var listener:ToolsListener? = null
+    var userTool: Tools? = null
+        set(value) {
+            field = value
+        }
 
     private lateinit var beatAnimator: Animator
     private lateinit var shakeAnimator: Animator
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        // 后期从服务器获取
-        userTool = Gson().fromJson(getJson(context, "userTool.json"), UserTool::class.java).apply { initTool(this@MainFragment) }
         beatAnimator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
         shakeAnimator = AnimatorInflater.loadAnimator(context, R.animator.shake)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tools, container, false)?.apply {
-            // 旅行容器添加图片
-            val near = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_near), 0f, 64.dp)
-            val far = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_far), near.bitmap.height.toFloat(), 8.dp)
-            val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), near.bitmap.height.toFloat(), 8.dp)
-            travelContainer.background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
-            travelContainer.post { (travelContainer.background as CycleDrawable).start() }
+            //            // 旅行容器添加图片
+//            val near = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_near), 0f, 64.dp)
+//            val far = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_far), near.bitmap.height.toFloat(), 8.dp)
+//            val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), near.bitmap.height.toFloat(), 8.dp)
+//            travelContainer.background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
+//            travelContainer.post { (travelContainer.background as CycleDrawable).start() }
             // 当占位控件得到位置信息后再设置toolsContainer
             toolsContainer.post { initToolsContainer(toolsContainer) }
             // 临时添加监听事件
-            speedup.setOnClickListener { onCoefficient(if (userTool.coefficient > BigDecimal.ONE) BigDecimal.ONE else BigDecimal(2)) }
+            userTool?.apply { speedup.setOnClickListener { onCoefficient(if (this.coefficient > BigDecimal.ONE) BigDecimal.ONE else BigDecimal(2)) } }
             // 设置拖拽监听
             setOnDragListener { _, event ->
                 // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
@@ -102,7 +101,6 @@ class MainFragment : Fragment(), ToolsOperateListener {
             // 设置取消区域
             cancel = Tools.CANCEL
         }
-        toolsContainer.adapter = ToolsAdapter(userTool)
         // 去掉item的各种动画
         toolsContainer.itemAnimator.apply {
             addDuration = 0
@@ -112,14 +110,18 @@ class MainFragment : Fragment(), ToolsOperateListener {
         }
         // 去掉RecycleView的离屏缓存
         toolsContainer.setItemViewCacheSize(0)
-        // 设置资产
-        onPropertyUpdate(userTool.property)
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
-        // 快速购买
-        quick.setOnClickListener { userTool.addTool(userTool.getQuickTool()) }
-        shakeAnimator.setTarget(quick)
-        shakeQuickAdd()
-        updateQuickAdd()
+
+        userTool?.also { tools ->
+            toolsContainer.adapter = ToolsAdapter(userTool)
+            // 设置资产
+            onPropertyUpdate(tools.property)
+            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
+            // 快速购买
+            quick.setOnClickListener { tools.addTool(tools.getQuickTool()) }
+            shakeAnimator.setTarget(quick)
+            shakeQuickAdd()
+            updateQuickAdd()
+        }
     }
 
     /**
@@ -139,10 +141,10 @@ class MainFragment : Fragment(), ToolsOperateListener {
         val index = event.clipData.getItemAt(0).text.toString().toInt()
         // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
         (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
-            val tool = userTool.getList()[index]
-            Log.i(this@MainFragment.TAG(), "item($index)[${tool.row}, ${tool.col}] drop row-col is [$i, $j]")
+            val tool = userTool?.getList()?.getOrNull(index)
+            Log.i(this@ToolsFragment.TAG(), "item($index)[${tool?.row}, ${tool?.col}] drop row-col is [$i, $j]")
             // 根据目标的row-col，再进行下一步操作
-            userTool.operateTool(index, i, j)
+            userTool?.operateTool(index, i, j)
         }
         // 隐藏回收站
         recycleContainer.visibility = View.INVISIBLE
@@ -162,20 +164,22 @@ class MainFragment : Fragment(), ToolsOperateListener {
      * 快速购买的图片和文字
      */
     private fun updateQuickAdd() {
-        val tool = userTool.getQuickTool()
-        val fileName = "lottie/dog/ic_dog_level${tool.level}.png"
+        val tool = userTool?.getQuickTool()
+        val fileName = "lottie/dog/ic_dog_level${tool?.level}.png"
         quick.levelImage.setImageDrawable(Drawable.createFromStream(context?.assets?.open(fileName), null))
-        quick.levelText.text = tool.level.toString()
-        Log.i(TAG(), "updateQuickAdd with level ${tool.level}")
+        quick.levelText.text = tool?.level.toString()
+        Log.i(TAG(), "updateQuickAdd with level ${tool?.level}")
     }
 
     override fun onToolsSelect(index: Int) {
         Log.i(TAG(), "onToolsSelect: $index")
-        // 更新回收站文本
-        recycleContainer.recycleText.text =
-            recycleContainer.context.resources.getString(R.string.recycle_property, ToolBean.getText(userTool.getList()[index].recyclePrice))
-        // 显示回收站
-        recycleContainer.visibility = View.VISIBLE
+        userTool?.also { tools ->
+            // 更新回收站文本
+            val price = ToolBean.getText(tools.getList()[index].recyclePrice)
+            recycleContainer.recycleText.text = context?.resources?.getString(R.string.recycle_property, price)
+            // 显示回收站
+            recycleContainer.visibility = View.VISIBLE
+        }
     }
 
     override fun onToolsCancel(index: Int, tool: ToolBean) {
@@ -186,12 +190,14 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsAdd(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
-        // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
-        toolsContainer.adapter.notifyItemInserted(index)
-        // 更新快速购买
-        updateQuickAdd()
-        // TODO:通知服务器完成了工具的添加
+        userTool?.also { tools ->
+            // 更新产生速率
+            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
+            toolsContainer.adapter.notifyItemInserted(index)
+            // 更新快速购买
+            updateQuickAdd()
+            // TODO:通知服务器完成了工具的添加
+        }
     }
 
     override fun onToolsAddError(tool: ToolBean, cause: Exception) {
@@ -200,24 +206,25 @@ class MainFragment : Fragment(), ToolsOperateListener {
             is NotEnoughSpaceError -> Toast.makeText(context, R.string.recycler_tip, Toast.LENGTH_SHORT).show()
             is NotEnoughPropertyError -> Toast.makeText(context, R.string.property_tip, Toast.LENGTH_SHORT).show()
         }
-
     }
 
     override fun onToolsRecycle(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsRecycle")
-        // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
-        toolsContainer.adapter.notifyItemRemoved(index)
-        // 更新快速购买
-        updateQuickAdd()
+        userTool?.also { tools ->
+            // 更新产生速率
+            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
+            toolsContainer.adapter.notifyItemRemoved(index)
+            // 更新快速购买
+            updateQuickAdd()
+        }
     }
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsApply")
         // 应用新动画
-        travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
-        travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
-        travel.playAnimation()
+//        travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
+//        travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
+//        travel.playAnimation()
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
@@ -230,12 +237,14 @@ class MainFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsMerge")
-        // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
-        // 更新快速购买
-        updateQuickAdd()
-        toolsContainer.adapter.notifyItemRemoved(tools[0].first)
-        toolsContainer.adapter.notifyItemChanged(tools[1].first)
+        userTool?.also { userTools ->
+            // 更新产生速率
+            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTools.getSpeed()))
+            // 更新快速购买
+            updateQuickAdd()
+            toolsContainer.adapter.notifyItemRemoved(tools[0].first)
+            toolsContainer.adapter.notifyItemChanged(tools[1].first)
+        }
     }
 
     override fun onToolsExchange(tools: List<Pair<Int, ToolBean>>) {
@@ -257,19 +266,21 @@ class MainFragment : Fragment(), ToolsOperateListener {
     }
 
     override fun onCoefficient(coefficient: BigDecimal) {
-        // TODO：请求服务器，暂时默认成功
-        userTool.coefficient = coefficient
-        // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
-        // 界面展示
-        if (userTool.coefficient > BigDecimal.ONE) {
-            // 加速
-            speedup.text = speedup.context.resources.getString(R.string.speedup_with, coefficient)
-            speed.setTextColor(Color.GREEN)
-        } else {
-            // 恢复到正常速度
-            speedup.text = speedup.context.resources.getString(R.string.speedup)
-            speed.setTextColor(Color.BLACK)
+        userTool?.also { tools ->
+            // TODO：请求服务器，暂时默认成功
+            tools.coefficient = coefficient
+            // 更新产生速率
+            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
+            // 界面展示
+            if (tools.coefficient > BigDecimal.ONE) {
+                // 加速
+                speedup.text = speedup.context.resources.getString(R.string.speedup_with, coefficient)
+                speed.setTextColor(Color.GREEN)
+            } else {
+                // 恢复到正常速度
+                speedup.text = speedup.context.resources.getString(R.string.speedup)
+                speed.setTextColor(Color.BLACK)
+            }
         }
     }
 }
