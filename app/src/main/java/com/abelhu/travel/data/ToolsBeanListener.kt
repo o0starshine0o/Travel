@@ -16,10 +16,10 @@ interface ToolsBeanListener {
      */
     fun coefficient(toolBean: ToolBean): BigDecimal
 
-    /**
-     * 每秒产生的资源数量
-     */
-    fun propertyPerSecond(toolBean: ToolBean): BigDecimal
+//    /**
+//     * 每秒产生的资源数量
+//     */
+//    fun propertyPerSecond(toolBean: ToolBean): BigDecimal
 
     /**
      * 基础价格

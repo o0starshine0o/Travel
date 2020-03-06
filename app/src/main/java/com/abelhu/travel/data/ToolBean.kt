@@ -1,5 +1,7 @@
 package com.abelhu.travel.data
 
+import android.util.Log
+import com.qicode.extension.TAG
 import java.io.Serializable
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -17,7 +19,7 @@ data class ToolBean(
     // 工具的最大等级
     var level: Int = Int.MIN_VALUE,
     // 工具每秒产生的资源数量
-    var propertyPer: BigDecimal = BigDecimal.ZERO,
+    val propertyPer: BigDecimal = BigDecimal.ZERO,
     // 工具上次产生资源的时间（单位：毫秒）
     var updateTime: Long = 0,
     // 基础价格
@@ -38,7 +40,7 @@ data class ToolBean(
          * "1", "w", "e", "aa", "bb" ... "yy", "zz"
          */
         fun getText(value: BigDecimal): String {
-            var c = '1'
+            var c = O
             var all = value
             while (all / BigDecimal(10000) >= BigDecimal.ONE) {
                 all /= BigDecimal(10000)
@@ -57,7 +59,7 @@ data class ToolBean(
                 O -> "${all.setScale(0, RoundingMode.HALF_UP)}"
                 W, E -> "${all.setScale(2, RoundingMode.HALF_UP)}${c.toLowerCase()}"
                 else -> "${all.setScale(2, RoundingMode.HALF_UP)}$c$c"
-            }
+            }.apply { Log.i(TAG(), "value change , from [$value] to [$this]") }
         }
 
         /**
@@ -89,7 +91,7 @@ data class ToolBean(
                 }
                 result *= BigDecimal(10000)
             }
-            return result
+            return result.apply { Log.i(TAG(), "value change , from [$text] to [$this]") }
         }
     }
 
@@ -98,8 +100,8 @@ data class ToolBean(
         updateTime = listener.updateTime(this)
         // 每秒产生资源数量的系数，需要根据用户的行为来确定，一旦更改要应用到所有的实例
         coefficient = listener.coefficient(this)
-        // 要转换成BigDecimal类型
-        propertyPer = listener.propertyPerSecond(this)
+//        // 要转换成BigDecimal类型
+//        propertyPer = listener.propertyPerSecond(this)
         // 要转换成BigDecimal类型
         basePrice = listener.basePrice(this)
         // 要转换成BigDecimal类型
@@ -111,7 +113,7 @@ data class ToolBean(
      */
     fun addLevel() {
         level++
-        propertyPer = listener.propertyPerSecond(this)
+//        propertyPer = listener.propertyPerSecond(this)
     }
 
 }

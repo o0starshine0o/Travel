@@ -145,10 +145,10 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
      */
     override fun coefficient(toolBean: ToolBean) = coefficient
 
-    /**
-     * 根据文档来的: 4 * 2.05.pow(level - 1)
-     */
-    override fun propertyPerSecond(toolBean: ToolBean) = BigDecimal(4) * BigDecimal("2.05").pow(toolBean.level - 1)
+//    /**
+//     * 根据文档来的: 4 * 2.05.pow(level - 1)
+//     */
+//    override fun propertyPerSecond(toolBean: ToolBean) = BigDecimal(4) * BigDecimal("2.05").pow(toolBean.level - 1)
 
     /**
      * 根据文档来的: 6750 * 2.66.pow(level - 3)
