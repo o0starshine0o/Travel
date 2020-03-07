@@ -184,15 +184,23 @@ class MainFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsAdd(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
-        // 更新产生速率
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
-        toolsContainer.adapter.notifyItemInserted(index)
-        // 更新快速购买
-        updateQuickAdd()
-        // TODO:通知服务器完成了工具的添加
+    override fun onToolsAdd(level: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun onToolsAddSuccess(tool: ToolBean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+//    override fun onToolsAdd(index: Int, tool: ToolBean) {
+//        Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
+//        // 更新产生速率
+//        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTool.getSpeed()))
+//        toolsContainer.adapter.notifyItemInserted(index)
+//        // 更新快速购买
+//        updateQuickAdd()
+//        // TODO:通知服务器完成了工具的添加
+//    }
 
     override fun onToolsAddError(tool: ToolBean, cause: Exception) {
         Log.i(TAG(), "onToolsAddError: ${cause.message}")
@@ -212,6 +220,10 @@ class MainFragment : Fragment(), ToolsOperateListener {
         updateQuickAdd()
     }
 
+    override fun onToolsRecycleSuccess(index: Int, tool: ToolBean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onToolsApply(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsApply")
         // 应用新动画
@@ -222,10 +234,18 @@ class MainFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
+    override fun onToolsApplySuccess(index: Int, tool: ToolBean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onToolsMove(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsMove")
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
+    }
+
+    override fun onToolsMoveSuccess(index: Int, tool: ToolBean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
@@ -238,10 +258,18 @@ class MainFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
 
+    override fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onToolsExchange(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsExchange")
         toolsContainer.adapter.notifyItemChanged(tools[0].first)
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
+    }
+
+    override fun onToolsExchangeSuccess(tools: List<Pair<Int, ToolBean>>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onPropertyUpdate(now: BigDecimal) {

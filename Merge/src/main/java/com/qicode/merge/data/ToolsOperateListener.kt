@@ -17,9 +17,14 @@ interface ToolsOperateListener {
     fun onToolsCancel(index: Int, tool: ToolBean)
 
     /**
+     * 添加一个tool
+     */
+    fun onToolsAdd(level: Int)
+
+    /**
      * 添加了一个tool
      */
-    fun onToolsAdd(index: Int, tool: ToolBean)
+    fun onToolsAddSuccess(tool: ToolBean)
 
     /**
      * 添加一个tool，但是失败了
@@ -32,9 +37,19 @@ interface ToolsOperateListener {
     fun onToolsRecycle(index: Int, tool: ToolBean)
 
     /**
+     * 删除tool
+     */
+    fun onToolsRecycleSuccess(index: Int, tool: ToolBean)
+
+    /**
      * 把工具应用到某地方
      */
     fun onToolsApply(index: Int, tool: ToolBean)
+
+    /**
+     * 把工具应用到某地方成功
+     */
+    fun onToolsApplySuccess(index: Int, tool: ToolBean)
 
     /**
      * 工具被移动
@@ -42,14 +57,29 @@ interface ToolsOperateListener {
     fun onToolsMove(index: Int, tool: ToolBean)
 
     /**
+     * 工具被移动成功
+     */
+    fun onToolsMoveSuccess(index: Int, tool: ToolBean)
+
+    /**
      * 工具被合成，返回合成后的工具
      */
     fun onToolsMerge(tools: List<Pair<Int, ToolBean>>)
 
     /**
+     * 工具被合成，返回合成后的工具
+     */
+    fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>)
+
+    /**
      * 工具被交换，返回交换后的两个工具
      */
     fun onToolsExchange(tools: List<Pair<Int, ToolBean>>)
+
+    /**
+     * 工具被交换，返回交换后的两个工具
+     */
+    fun onToolsExchangeSuccess(tools: List<Pair<Int, ToolBean>>)
 
     /**
      * 更新总资产

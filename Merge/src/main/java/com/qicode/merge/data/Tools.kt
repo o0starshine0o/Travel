@@ -2,7 +2,6 @@ package com.qicode.merge.data
 
 import android.util.Log
 import com.qicode.extension.TAG
-import com.qicode.merge.exception.NotEnoughSpaceError
 import java.math.BigDecimal
 
 abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
@@ -52,27 +51,23 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
     /**
      * 添加一个tool
      */
-    fun addTool(tool: ToolBean? = null, rowMax: Int = 3, colMax: Int = 4) {
-        Log.i(TAG(), "add tool with level: ${tool?.level}")
-        val newTool = tool ?: ToolBean(this, level = 1)
-//        // 如果资产不够了，需要抛出
-//        if (property < newTool.buyPrice) {
-//            listener.onToolsAddError(newTool, NotEnoughPropertyError())
-//            return
-//        }
-        // 寻找放置tool的空间
-        for (i in 0 until rowMax) {
-            for (j in 0 until colMax) {
-                if (getTool(i, j) == null) return listener.onToolsAdd(getList().size + 1, newTool.apply {
-                    row = i
-                    col = j
-                    getList().add(this)
-//                    // 需要减去需要的费用
-//                    this@Tools.addProperty(-buyPrice)
-                })
+    fun addTool(tool: ToolBean, rowMax: Int = 3, colMax: Int = 4): Int {
+        Log.i(TAG(), "add tool with level: ${tool.level}")
+        tool.run {
+            if (intArrayOf(row, col).contentEquals(ADD)) {
+                for (index in 0 until rowMax * colMax) {
+                    val i = index / colMax
+                    val j = index % colMax
+                    if (getTool(i, j) == null) {
+                        row = i
+                        col = j
+                        break
+                    }
+                }
             }
+            getList().add(this)
         }
-        return listener.onToolsAddError(newTool, NotEnoughSpaceError())
+        return getList().indexOf(tool)
     }
 
     /**
@@ -89,22 +84,6 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
      */
     fun getQuickTool(): ToolBean {
         return ToolBean(this, level = 1)
-//        val maxLevel = maxLevel()
-//        return when (maxLevel) {
-//            in 0..5 -> ToolBean(this, level = 1)
-//            else -> {
-//                var targetLevel = Int.MAX_VALUE
-//                var maxPrice = BigDecimal.ZERO
-//                for (level in max(maxLevel - 10, 1)..(maxLevel - 4)) {
-//                    val result = ToolBean(this, level = level).buyPrice * BigDecimal(2).pow(max(0, 7 - level))
-//                    if (maxPrice == BigDecimal.ZERO || result > maxPrice && result <= property) {
-//                        maxPrice = result
-//                        targetLevel = level
-//                    }
-//                }
-//                ToolBean(this, level = targetLevel)
-//            }
-//        }
     }
 
     /**
@@ -119,7 +98,7 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
             // 取消对tool的操作
             intArrayOf(row, col).contentEquals(CANCEL) -> listener.onToolsCancel(index, origin)
             // 删除这个tool
-            intArrayOf(row, col).contentEquals(RECYCLE) -> listener.onToolsRecycle(index, recycleTool(origin))
+            intArrayOf(row, col).contentEquals(RECYCLE) -> listener.onToolsRecycle(index, origin)
             // 将这个tool应用到某个地方
             intArrayOf(row, col).contentEquals(APPLY) -> listener.onToolsApply(index, origin)
             else -> {
@@ -211,7 +190,7 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
      * 回收工具
      * 注意：需要补充对应的回收价格
      */
-    private fun recycleTool(origin: ToolBean): ToolBean {
+    fun recycleTool(origin: ToolBean): ToolBean {
         getList().remove(origin)
         addProperty(origin.recyclePrice)
         return origin

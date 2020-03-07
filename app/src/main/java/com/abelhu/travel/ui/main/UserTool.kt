@@ -12,6 +12,8 @@ data class UserTool(
     var gold: String,
     var produceQuick: ProduceQuick,
     var items: List<Items>,
+    var bestItemId: Int,
+    var bestItemGoldPrice: String,
     var operateListener: ToolsOperateListener
 ) : Tools(operateListener) {
     // 需要把Items转换成ToolBean

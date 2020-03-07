@@ -15,8 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-//import com.qicode.cycle.CycleBitmap
-//import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.TAG
 import com.qicode.extension.dp
 import com.qicode.grid.GridLayoutDrawable
@@ -31,10 +29,8 @@ import kotlinx.android.synthetic.main.fragment_tools.*
 import kotlinx.android.synthetic.main.fragment_tools.view.*
 import java.math.BigDecimal
 
-
 open class ToolsFragment : Fragment(), ToolsOperateListener {
 
-    //    var listener:ToolsListener? = null
     var userTool: Tools? = null
         set(value) {
             field = value
@@ -43,7 +39,9 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
     private lateinit var beatAnimator: Animator
     private lateinit var shakeAnimator: Animator
 
-
+    /**
+     * 初始化一些需要context的变量
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         beatAnimator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
@@ -51,26 +49,26 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_tools, container, false)?.apply {
-            //            // 旅行容器添加图片
-//            val near = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_near), 0f, 64.dp)
-//            val far = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_far), near.bitmap.height.toFloat(), 8.dp)
-//            val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), near.bitmap.height.toFloat(), 8.dp)
-//            travelContainer.background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
-//            travelContainer.post { (travelContainer.background as CycleDrawable).start() }
-            // 当占位控件得到位置信息后再设置toolsContainer
-            toolsContainer.post { initToolsContainer(toolsContainer) }
-            // 临时添加监听事件
-            userTool?.apply { speedup.setOnClickListener { onCoefficient(if (this.coefficient > BigDecimal.ONE) BigDecimal.ONE else BigDecimal(2)) } }
-            // 设置拖拽监听
-            setOnDragListener { _, event ->
-                // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
-                if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
-                true
-            }
+        return inflater.inflate(R.layout.fragment_tools, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // 当占位控件得到位置信息后再设置toolsContainer
+        toolsContainer.post { initToolsContainer(toolsContainer) }
+        // 初始化加速功能
+        speedUp()
+        // 设置拖拽释放监听
+        view.setOnDragListener { _, event ->
+            // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
+            if (event.action == DragEvent.ACTION_DROP) onToolsDrop(event)
+            true
         }
     }
 
+    /**
+     * 初始化工具容器
+     */
     private fun initToolsContainer(toolsContainer: RecyclerView) {
         // 设置layout
         toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
@@ -110,14 +108,14 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         }
         // 去掉RecycleView的离屏缓存
         toolsContainer.setItemViewCacheSize(0)
+        // 快速购买
+        quick.setOnClickListener { onToolsAdd(quick.tag as Int) }
 
         userTool?.also { tools ->
             toolsContainer.adapter = ToolsAdapter(userTool)
             // 设置资产
             onPropertyUpdate(tools.property)
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
-            // 快速购买
-            quick.setOnClickListener { tools.addTool(tools.getQuickTool()) }
             shakeAnimator.setTarget(quick)
             shakeQuickAdd()
             updateQuickAdd()
@@ -157,7 +155,7 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         // 每10秒抖动一次快速购买
         Handler().postDelayed(this::shakeQuickAdd, 10000)
         // 根据文档，按钮一直抖动
-        shakeAnimator.start()
+        if (recycleContainer.visibility == View.INVISIBLE) shakeAnimator.start()
     }
 
     /**
@@ -169,6 +167,17 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         quick.levelImage.setImageDrawable(Drawable.createFromStream(context?.assets?.open(fileName), null))
         quick.levelText.text = tool?.level.toString()
         Log.i(TAG(), "updateQuickAdd with level ${tool?.level}")
+    }
+
+    /**
+     * 初始化加速功能
+     */
+    private fun speedUp() {
+        userTool?.apply {
+            speedup.setOnClickListener {
+                onCoefficient(if (this.coefficient > BigDecimal.ONE) BigDecimal.ONE else BigDecimal(2))
+            }
+        }
     }
 
     override fun onToolsSelect(index: Int) {
@@ -188,15 +197,19 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsAdd(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsAdd[$index]:(${tool.row}, ${tool.col})")
+    override fun onToolsAdd(level: Int) {
+        Log.i(TAG(), "onToolsAdd")
+    }
+
+    override fun onToolsAddSuccess(tool: ToolBean) {
+        Log.i(TAG(), "onToolsAddSuccess")
         userTool?.also { tools ->
+            val index = tools.addTool(tool)
             // 更新产生速率
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
             toolsContainer.adapter.notifyItemInserted(index)
             // 更新快速购买
             updateQuickAdd()
-            // TODO:通知服务器完成了工具的添加
         }
     }
 
@@ -210,7 +223,12 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsRecycle(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsRecycle")
+    }
+
+    override fun onToolsRecycleSuccess(index: Int, tool: ToolBean) {
+        Log.i(TAG(), "onToolsRecycleSuccess")
         userTool?.also { tools ->
+            tools.recycleTool(tool)
             // 更新产生速率
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
             toolsContainer.adapter.notifyItemRemoved(index)
@@ -221,22 +239,27 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsApply")
-        // 应用新动画
-//        travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
-//        travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
-//        travel.playAnimation()
+    }
+
+    override fun onToolsApplySuccess(index: Int, tool: ToolBean) {
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
     override fun onToolsMove(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsMove")
+    }
+
+    override fun onToolsMoveSuccess(index: Int, tool: ToolBean) {
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
     override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsMerge")
+    }
+
+    override fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>) {
         userTool?.also { userTools ->
             // 更新产生速率
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTools.getSpeed()))
@@ -249,6 +272,9 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
 
     override fun onToolsExchange(tools: List<Pair<Int, ToolBean>>) {
         Log.i(TAG(), "onToolsExchange")
+    }
+
+    override fun onToolsExchangeSuccess(tools: List<Pair<Int, ToolBean>>) {
         toolsContainer.adapter.notifyItemChanged(tools[0].first)
         toolsContainer.adapter.notifyItemChanged(tools[1].first)
     }
