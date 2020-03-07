@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -29,12 +30,14 @@ import kotlinx.android.synthetic.main.fragment_tools.*
 import kotlinx.android.synthetic.main.fragment_tools.view.*
 import java.math.BigDecimal
 
-open class ToolsFragment : Fragment(), ToolsOperateListener {
+abstract class ToolsFragment : Fragment(), ToolsOperateListener {
 
     var userTool: Tools? = null
         set(value) {
             field = value
         }
+
+    abstract fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
 
     private lateinit var beatAnimator: Animator
     private lateinit var shakeAnimator: Animator
@@ -49,7 +52,11 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_tools, container, false)
+        return inflater.inflate(R.layout.fragment_tools, container, false).apply {
+            // travelContainer添加一个的view
+            val params = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            travelContainer.addView(travelView(inflater, travelContainer), params)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -197,9 +204,9 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsAdd(level: Int) {
-        Log.i(TAG(), "onToolsAdd")
-    }
+//    override fun onToolsAdd(level: Int) {
+//        Log.i(TAG(), "onToolsAdd")
+//    }
 
     override fun onToolsAddSuccess(tool: ToolBean) {
         Log.i(TAG(), "onToolsAddSuccess")
@@ -221,9 +228,9 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         }
     }
 
-    override fun onToolsRecycle(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsRecycle")
-    }
+//    override fun onToolsRecycle(index: Int, tool: ToolBean) {
+//        Log.i(TAG(), "onToolsRecycle")
+//    }
 
     override fun onToolsRecycleSuccess(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsRecycleSuccess")
@@ -237,27 +244,27 @@ open class ToolsFragment : Fragment(), ToolsOperateListener {
         }
     }
 
-    override fun onToolsApply(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsApply")
-    }
+//    override fun onToolsApply(index: Int, tool: ToolBean) {
+//        Log.i(TAG(), "onToolsApply")
+//    }
 
     override fun onToolsApplySuccess(index: Int, tool: ToolBean) {
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsMove(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsMove")
-    }
+//    override fun onToolsMove(index: Int, tool: ToolBean) {
+//        Log.i(TAG(), "onToolsMove")
+//    }
 
     override fun onToolsMoveSuccess(index: Int, tool: ToolBean) {
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
-        Log.i(TAG(), "onToolsMerge")
-    }
+//    override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
+//        Log.i(TAG(), "onToolsMerge")
+//    }
 
     override fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>) {
         userTool?.also { userTools ->

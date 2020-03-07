@@ -3,6 +3,8 @@ package com.abelhu.travel.ui.main
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
+import android.view.LayoutInflater
 import android.view.View
 import com.abelhu.travel.R
 import com.abelhu.travel.utils.getJson
@@ -39,8 +41,11 @@ class MergeFragment : ToolsFragment() {
         }
     }
 
+    override fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View {
+        return inflater.inflate(R.layout.view_travel, travelContainer, false)
+    }
+
     override fun onToolsAdd(level: Int) {
-        super.onToolsAdd(level)
         // todo: 进行网络请求，如果返回成功过执行添加操作
         userTool?.apply {
             onToolsAddSuccess(ToolBean(this, Tools.ADD[0], Tools.ADD[1], 1))
@@ -48,25 +53,21 @@ class MergeFragment : ToolsFragment() {
     }
 
     override fun onToolsRecycle(index: Int, tool: ToolBean) {
-        super.onToolsRecycle(index, tool)
         // todo: 进行网络请求，如果返回成功过执行添加操作
         onToolsRecycleSuccess(index, tool)
     }
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
-        super.onToolsApply(index, tool)
         // todo: 应用换装功能
         if (true) onToolsApplySuccess(index, tool)
     }
 
     override fun onToolsMove(index: Int, tool: ToolBean) {
-        super.onToolsMove(index, tool)
         // todo: 进行网络请求，如果返回成功过执行添加操作
         if (true) onToolsMoveSuccess(index, tool)
     }
 
     override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
-        super.onToolsMerge(tools)
         // todo: 进行网络请求，如果返回成功过执行添加操作
         if (true) onToolsMergeSuccess(tools)
     }
