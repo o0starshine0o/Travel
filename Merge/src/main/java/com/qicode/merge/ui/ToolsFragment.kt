@@ -19,7 +19,7 @@ import android.widget.Toast
 import com.qicode.extension.TAG
 import com.qicode.extension.dp
 import com.qicode.grid.GridLayoutDrawable
-import com.qicode.grid.GridLayoutManager
+import com.qicode.grid.GridManager
 import com.qicode.merge.R
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
@@ -79,7 +79,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
      */
     private fun initToolsContainer(toolsContainer: RecyclerView) {
         // 设置layout
-        toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
+        toolsContainer.layoutManager = GridManager(3, 4) { position, itemWidth, itemHeight ->
             // 再layoutManager完成item的计算后，设置toolsContainer的背景
             toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
         }.apply {
@@ -146,7 +146,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         // 根据保存的数据，获取原始的index
         val index = event.clipData.getItemAt(0).text.toString().toInt()
         // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
-        (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
+        (toolsContainer.layoutManager as? GridManager)?.getRowCol(x, y) { i, j ->
             val tool = userTool?.getList()?.getOrNull(index)
             Log.i(this@ToolsFragment.TAG(), "item($index)[${tool?.row}, ${tool?.col}] drop row-col is [$i, $j]")
             // 根据目标的row-col，再进行下一步操作

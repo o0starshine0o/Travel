@@ -34,7 +34,8 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:design:27.1.1'
     // 工具类，本地或者网络库
-    implementation 'com.github.qicodes:utils:1.2.7'
+    api 'com.github.qicodes:utils:1.2.7'
     // 绘制背景九宫格
-    implementation project(path: ':GridView')
+//    implementation project(path: ':GridView')
+    api 'com.github.qicodes:GridView:1.0.7'
 }

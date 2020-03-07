@@ -1,2 +1,2 @@
-include ':app', ':GridView', ':CycleDrawable', ':Merge'
+include ':app', ':Merge', ':GridView', ':CycleDrawable'
 rootProject.name='Travel'

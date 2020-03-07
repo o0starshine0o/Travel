@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.qicode.extension.TAG
 import com.qicode.grid.GridDragBuilder
-import com.qicode.grid.GridLayoutManager
+import com.qicode.grid.GridManager
 import com.qicode.merge.R
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
@@ -30,7 +30,7 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         // 设置tool可见
         bean.visibility = true
         // 根据保存的数据，设置item的位置
-        (view.layoutParams as GridLayoutManager.LayoutParams).apply { row = bean.row;col = bean.col }
+        (view.layoutParams as GridManager.LayoutParams).apply { row = bean.row;col = bean.col }
         // 设置文本， 图片
         val fileName = "lottie/dog/ic_dog_level${bean.level}.png"
         view.image.setImageDrawable(Drawable.createFromStream(view.context.assets.open(fileName), null))

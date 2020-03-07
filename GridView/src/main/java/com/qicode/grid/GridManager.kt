@@ -10,9 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.qicode.extension.TAG
 
-typealias GridFinish = (position: Array<Array<FloatArray>>, itemWidth: Float, itemHeight: Float) -> Unit
-
-class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, private val onGridFinish: GridFinish? = null) : RecyclerView.LayoutManager() {
+class GridManager(
+    private val row: Int = 3,
+    private val col: Int = 4,
+    private val onGridFinish: ((position: Array<Array<FloatArray>>, itemWidth: Float, itemHeight: Float) -> Unit)? = null
+) : RecyclerView.LayoutManager() {
     /**
      * 应用的区域，拖拽到这里面表示应用tool
      */
@@ -110,7 +112,7 @@ class GridLayoutManager(private val row: Int = 3, private val col: Int = 4, priv
         // 获取行列对应的位置坐标
         val leftTop = position[params.row][params.col]
         return RectF(leftTop[0], leftTop[1], leftTop[0] + itemWidth, leftTop[1] + itemHeight).apply {
-            Log.i(this@GridLayoutManager.TAG(), "available rect for view[${params.row}, ${params.col}]:[$left, $top, $right, $bottom]")
+            Log.i(this@GridManager.TAG(), "available rect for view[${params.row}, ${params.col}]:[$left, $top, $right, $bottom]")
         }
     }
 
