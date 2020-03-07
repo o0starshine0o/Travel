@@ -1,5 +1,7 @@
 package com.abelhu.travel.ui.main
 
+//import com.qicode.grid.GridLayoutDrawable
+//import com.qicode.grid.GridLayoutManager
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.content.Context
@@ -23,10 +25,7 @@ import com.qicode.cycle.CycleBitmap
 import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.TAG
 import com.qicode.extension.dp
-import com.qicode.grid.GridLayoutDrawable
-import com.qicode.grid.GridLayoutManager
 import com.qicode.merge.data.ToolBean
-import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
 import com.qicode.merge.exception.NotEnoughPropertyError
 import com.qicode.merge.exception.NotEnoughSpaceError
@@ -73,35 +72,35 @@ class MainFragment : Fragment(), ToolsOperateListener {
     }
 
     private fun initToolsContainer(toolsContainer: RecyclerView) {
-        // 设置layout
-        toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
-            // 再layoutManager完成item的计算后，设置toolsContainer的背景
-            toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
-        }.apply {
-            // 获取toolsContainer的左上角为原点
-            val toolsPosition = intArrayOf(0, 0)
-            toolsContainer.getLocationInWindow(toolsPosition)
-            // 设置apply的区域，以toolsContainer的左上角为原点
-            travel.getGlobalVisibleRect(applyRect)
-            applyRect.apply {
-                left -= toolsPosition[0]
-                right -= toolsPosition[0]
-                top -= toolsPosition[1]
-                bottom -= toolsPosition[1]
-            }
-            apply = Tools.APPLY
-            // 设置recycle的区域，以toolsContainer的左上角为原点
-            recycleContainer.getGlobalVisibleRect(recycleRect)
-            recycleRect.apply {
-                left -= toolsPosition[0]
-                right -= toolsPosition[0]
-                top -= toolsPosition[1]
-                bottom -= toolsPosition[1]
-            }
-            recycle = Tools.RECYCLE
-            // 设置取消区域
-            cancel = Tools.CANCEL
-        }
+//        // 设置layout
+//        toolsContainer.layoutManager = GridLayoutManager(3, 4) { position, itemWidth, itemHeight ->
+//            // 再layoutManager完成item的计算后，设置toolsContainer的背景
+//            toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
+//        }.apply {
+//            // 获取toolsContainer的左上角为原点
+//            val toolsPosition = intArrayOf(0, 0)
+//            toolsContainer.getLocationInWindow(toolsPosition)
+//            // 设置apply的区域，以toolsContainer的左上角为原点
+//            travel.getGlobalVisibleRect(applyRect)
+//            applyRect.apply {
+//                left -= toolsPosition[0]
+//                right -= toolsPosition[0]
+//                top -= toolsPosition[1]
+//                bottom -= toolsPosition[1]
+//            }
+//            apply = Tools.APPLY
+//            // 设置recycle的区域，以toolsContainer的左上角为原点
+//            recycleContainer.getGlobalVisibleRect(recycleRect)
+//            recycleRect.apply {
+//                left -= toolsPosition[0]
+//                right -= toolsPosition[0]
+//                top -= toolsPosition[1]
+//                bottom -= toolsPosition[1]
+//            }
+//            recycle = Tools.RECYCLE
+//            // 设置取消区域
+//            cancel = Tools.CANCEL
+//        }
         toolsContainer.adapter = ToolsAdapter(userTool)
         // 去掉item的各种动画
         toolsContainer.itemAnimator.apply {
@@ -137,13 +136,13 @@ class MainFragment : Fragment(), ToolsOperateListener {
         val y = event.y + dragPosition[1] - toolsPosition[1]
         // 根据保存的数据，获取原始的index
         val index = event.clipData.getItemAt(0).text.toString().toInt()
-        // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
-        (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
-            val tool = userTool.getList()[index]
-            Log.i(this@MainFragment.TAG(), "item($index)[${tool.row}, ${tool.col}] drop row-col is [$i, $j]")
-            // 根据目标的row-col，再进行下一步操作
-            userTool.operateTool(index, i, j)
-        }
+//        // 根据GridLayoutManager里保存的位置信息，获取目标的row-col
+//        (toolsContainer.layoutManager as? GridLayoutManager)?.getRowCol(x, y) { i, j ->
+//            val tool = userTool.getList()[index]
+//            Log.i(this@MainFragment.TAG(), "item($index)[${tool.row}, ${tool.col}] drop row-col is [$i, $j]")
+//            // 根据目标的row-col，再进行下一步操作
+//            userTool.operateTool(index, i, j)
+//        }
         // 隐藏回收站
         recycleContainer.visibility = View.INVISIBLE
     }

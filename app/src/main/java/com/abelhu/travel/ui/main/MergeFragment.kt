@@ -15,6 +15,7 @@ import com.qicode.extension.dp
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
 import com.qicode.merge.ui.ToolsFragment
+import kotlinx.android.synthetic.main.view_travel.*
 import java.math.BigDecimal
 
 class MergeFragment : ToolsFragment() {
@@ -58,6 +59,10 @@ class MergeFragment : ToolsFragment() {
     }
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
+        // 应用新动画
+        travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
+        travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
+        travel.playAnimation()
         // todo: 应用换装功能
         if (true) onToolsApplySuccess(index, tool)
     }

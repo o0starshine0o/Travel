@@ -1,9 +1,10 @@
 package com.abelhu.travel.ui.main
 
+//import com.qicode.grid.GridDragBuilder
+//import com.qicode.grid.GridLayoutManager
 import android.animation.AnimatorInflater
 import android.content.ClipData
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -11,8 +12,6 @@ import android.view.MotionEvent
 import android.view.View
 import com.abelhu.travel.R
 import com.qicode.extension.TAG
-import com.qicode.grid.GridDragBuilder
-import com.qicode.grid.GridLayoutManager
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
 import kotlinx.android.synthetic.main.item_tool.view.*
@@ -31,7 +30,7 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         // 设置tool可见
         bean.visibility = true
         // 根据保存的数据，设置item的位置
-        (view.layoutParams as GridLayoutManager.LayoutParams).apply { row = bean.row;col = bean.col }
+//        (view.layoutParams as GridLayoutManager.LayoutParams).apply { row = bean.row;col = bean.col }
         // 设置文本， 图片
         val fileName = "lottie/dog/ic_dog_level${bean.level}.png"
         view.image.setImageDrawable(Drawable.createFromStream(view.context.assets.open(fileName), null))
@@ -77,16 +76,16 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         // 隐藏view中的动画部分
         view.propertyContainer.visibility = View.INVISIBLE
         // 创建DragShadowBuilder，我把控件本身传进去
-        val builder = GridDragBuilder(view, event.x, event.y)
+//        val builder = GridDragBuilder(view, event.x, event.y)
         // 剪切板数据，可以在DragEvent.ACTION_DROP方法的时候获取。
         val data = ClipData.newPlainText("position", position.toString())
         // 开始拖拽
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            view.startDragAndDrop(data, builder, view, View.DRAG_FLAG_OPAQUE)
-        } else {
-            @Suppress("DEPRECATION")
-            view.startDrag(data, builder, view, View.DRAG_FLAG_OPAQUE)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            view.startDragAndDrop(data, builder, view, View.DRAG_FLAG_OPAQUE)
+//        } else {
+//            @Suppress("DEPRECATION")
+//            view.startDrag(data, builder, view, View.DRAG_FLAG_OPAQUE)
+//        }
         // 隐藏原始view
         view.visibility = View.INVISIBLE
         return true

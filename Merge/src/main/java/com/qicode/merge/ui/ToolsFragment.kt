@@ -41,6 +41,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
 
     private lateinit var beatAnimator: Animator
     private lateinit var shakeAnimator: Animator
+    private lateinit var travelView: View
 
     /**
      * 初始化一些需要context的变量
@@ -55,7 +56,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         return inflater.inflate(R.layout.fragment_tools, container, false).apply {
             // travelContainer添加一个的view
             val params = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            travelContainer.addView(travelView(inflater, travelContainer), params)
+            travelContainer.addView(travelView(inflater, travelContainer).apply { travelView = this }, params)
         }
     }
 
@@ -86,7 +87,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
             val toolsPosition = intArrayOf(0, 0)
             toolsContainer.getLocationInWindow(toolsPosition)
             // 设置apply的区域，以toolsContainer的左上角为原点
-            travel.getGlobalVisibleRect(applyRect)
+            travelView.getGlobalVisibleRect(applyRect)
             applyRect.apply {
                 left -= toolsPosition[0]
                 right -= toolsPosition[0]
