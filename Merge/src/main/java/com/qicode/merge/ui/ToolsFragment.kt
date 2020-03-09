@@ -81,7 +81,8 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         // 设置layout
         toolsContainer.layoutManager = GridManager(3, 4) { position, itemWidth, itemHeight ->
             // 再layoutManager完成item的计算后，设置toolsContainer的背景
-            toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 10.dp, Color.LTGRAY, 10.dp)
+            val gray = Color.rgb(241, 239, 242)
+            toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 6.dp, gray, 10.dp)
         }.apply {
             // 获取toolsContainer的左上角为原点
             val toolsPosition = intArrayOf(0, 0)
