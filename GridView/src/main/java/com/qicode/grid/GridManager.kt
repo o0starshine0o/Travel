@@ -68,24 +68,26 @@ class GridManager(
     override fun generateLayoutParams(c: Context?, attrs: AttributeSet?) = LayoutParams(itemWidth.toInt(), itemHeight.toInt())
     override fun checkLayoutParams(lp: RecyclerView.LayoutParams?) = lp != null && lp is LayoutParams
 
-    override fun onAttachedToWindow(view: RecyclerView?) {
+    override fun onAttachedToWindow(view: RecyclerView) {
         super.onAttachedToWindow(view)
-        itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
-        itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
-        Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
-        // 计算position
-        for (i in 0 until row) {
-            for (j in 0 until col) {
-                position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
-                Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
+        view.post {
+            itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
+            itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
+            Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
+            // 计算position
+            for (i in 0 until row) {
+                for (j in 0 until col) {
+                    position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
+                    Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
+                }
             }
+            onGridFinish?.invoke(position, itemWidth, itemHeight)
         }
-        onGridFinish?.invoke(position, itemWidth, itemHeight)
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
         // 无数据时不计算
-        if (recycler == null || itemCount < 0 || state?.isPreLayout == true) return
+        if (recycler == null || itemCount < 0 || state?.isPreLayout == true || itemWidth <= 0 || itemHeight <= 0) return
         Log.i(TAG(), "onLayoutChildren")
         // 缓存所有view
         detachAndScrapAttachedViews(recycler)
@@ -109,6 +111,8 @@ class GridManager(
         val params = view.layoutParams as LayoutParams
         // 非法参数，直接返回
         if (params.row < 0 || params.col < 0 || params.row >= position.size || params.col >= position[params.row].size) return null
+        // 尚未计算item，直接返回
+        if (itemHeight <= 0.0000001 || itemWidth <= 0.0000001) return null
         // 获取行列对应的位置坐标
         val leftTop = position[params.row][params.col]
         return RectF(leftTop[0], leftTop[1], leftTop[0] + itemWidth, leftTop[1] + itemHeight).apply {

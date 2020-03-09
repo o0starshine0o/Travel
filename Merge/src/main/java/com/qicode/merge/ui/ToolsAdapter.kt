@@ -8,12 +8,14 @@ import com.qicode.extension.TAG
 import com.qicode.merge.R
 import com.qicode.merge.data.Tools
 
-class ToolsAdapter(private val tools: Tools?) : RecyclerView.Adapter<ToolsHolder>() {
+class ToolsAdapter(var tools: Tools?) : RecyclerView.Adapter<ToolsHolder>() {
 
     override fun getItemCount() = tools?.getList()?.size ?: 0
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToolsHolder {
+        return ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false))
+    }
+
 
     override fun onBindViewHolder(holder: ToolsHolder, position: Int) {
         holder.onBind(tools, position)

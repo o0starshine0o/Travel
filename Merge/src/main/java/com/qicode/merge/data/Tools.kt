@@ -3,6 +3,7 @@ package com.qicode.merge.data
 import android.util.Log
 import com.qicode.extension.TAG
 import java.math.BigDecimal
+import kotlin.math.max
 
 abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
 
@@ -22,6 +23,11 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
      * 保存所有的工具，需要服务器来设定
      */
     abstract fun getList(): MutableList<ToolBean>
+
+    /**
+     * 获取快速购买按钮对应的工具，需要服务器来设定
+     */
+    abstract fun getQuickTool(): ToolBean
 
     /**
      * 生成资产的系数
@@ -80,13 +86,6 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
     }
 
     /**
-     * 获取快速购买按钮对应的工具
-     */
-    fun getQuickTool(): ToolBean {
-        return ToolBean(this, level = 1)
-    }
-
-    /**
      * 根据row和col操作工具的行为
      */
     fun operateTool(index: Int, row: Int, col: Int) {
@@ -134,7 +133,7 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
         1 -> BigDecimal(100)
         2 -> BigDecimal(1500)
         3 -> BigDecimal(67500)
-        else -> BigDecimal(6750) * BigDecimal("2.66").pow(toolBean.level - 3)
+        else -> BigDecimal(6750) * BigDecimal("2.66").pow(max(1, toolBean.level - 3))
     }
 
     /**

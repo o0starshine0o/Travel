@@ -1,9 +1,9 @@
 package com.abelhu.travel.ui.main
 
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import com.abelhu.travel.R
@@ -11,6 +11,7 @@ import com.abelhu.travel.utils.getJson
 import com.google.gson.Gson
 import com.qicode.cycle.CycleBitmap
 import com.qicode.cycle.CycleDrawable
+import com.qicode.extension.TAG
 import com.qicode.extension.dp
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
@@ -19,12 +20,6 @@ import kotlinx.android.synthetic.main.view_travel.*
 import java.math.BigDecimal
 
 class MergeFragment : ToolsFragment() {
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        // 这里将来要从服务器获取
-        userTool = Gson().fromJson(getJson(context, "userTool.json"), UserTool::class.java).apply { initTool(this@MergeFragment) }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,8 +32,15 @@ class MergeFragment : ToolsFragment() {
                 background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
                 post { (background as CycleDrawable).start() }
             }
-            // 设置快速购买
-            findViewById<View>(R.id.quick).tag = (userTool as UserTool).bestItemId
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG(), "onResume")
+        // 这里将来要从服务器获取
+        context?.apply {
+            userTool = Gson().fromJson(getJson(this, "userTool.json"), UserTool::class.java).apply { initTool(this@MergeFragment) }
         }
     }
 

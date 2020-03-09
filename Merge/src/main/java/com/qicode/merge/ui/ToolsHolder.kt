@@ -23,6 +23,7 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     lateinit var bean: ToolBean
     var handler = Handler()
     private val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
+
     fun onBind(tools: Tools?, position: Int) {
         this.tools = tools ?: return
         bean = tools.getList()[position]
@@ -51,7 +52,6 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     private fun propertyShow() {
         bean.apply {
-            Log.i(TAG(), "propertyShow tools[${row}, ${col}]")
             // 计算产生的资源
             val current = System.currentTimeMillis()
             val resource = BigDecimal((current - updateTime) / 1000) * propertyPer * coefficient
@@ -63,11 +63,14 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
                 view.property.text = view.context.resources.getString(R.string.add_resource, ToolBean.getText(resource))
                 view.propertyContainer.visibility = View.VISIBLE
                 // 启动动画
+                animator.cancel()
                 animator.setTarget(view.propertyContainer)
                 animator.start()
             }
             // 准备下一轮更新
-            handler.postDelayed(this@ToolsHolder::propertyShow, 5000)
+            handler.postDelayed(this@ToolsHolder::propertyShow, 4000)
+            // 查看数据
+            Log.i(TAG(), "propertyShow tools[${row}, ${col}] with resource: $resource")
         }
     }
 

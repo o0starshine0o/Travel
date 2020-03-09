@@ -34,7 +34,20 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
 
     var userTool: Tools? = null
         set(value) {
-            field = value
+            if (value != null) {
+                field = value
+                if (toolsContainer.adapter == null) toolsContainer.adapter = ToolsAdapter(value)
+                else {
+                    (toolsContainer.adapter as? ToolsAdapter)?.tools = value
+                    toolsContainer.adapter.notifyDataSetChanged()
+                }
+                // 设置资产
+                onPropertyUpdate(value.property)
+                // 更新资产生产速度
+                updatePropertySpeed(value.getSpeed())
+                // 启动快速购买动画
+                shakeQuickAdd()
+            }
         }
 
     abstract fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
@@ -54,9 +67,16 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tools, container, false).apply {
+            toolsContainer.layoutManager = GridManager(3, 4) { position, itemWidth, itemHeight ->
+                // 再layoutManager完成item的计算后，设置toolsContainer的背景
+                val gray = Color.rgb(241, 239, 242)
+                toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 6.dp, gray, 10.dp)
+            }
             // travelContainer添加一个的view
             val params = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             travelContainer.addView(travelView(inflater, travelContainer).apply { travelView = this }, params)
+            // 设置动画
+            shakeAnimator.setTarget(quick)
         }
     }
 
@@ -79,11 +99,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
      */
     private fun initToolsContainer(toolsContainer: RecyclerView) {
         // 设置layout
-        toolsContainer.layoutManager = GridManager(3, 4) { position, itemWidth, itemHeight ->
-            // 再layoutManager完成item的计算后，设置toolsContainer的背景
-            val gray = Color.rgb(241, 239, 242)
-            toolsContainer.background = GridLayoutDrawable(position, itemWidth, itemHeight, 6.dp, gray, 10.dp)
-        }.apply {
+        (toolsContainer.layoutManager as GridManager).apply {
             // 获取toolsContainer的左上角为原点
             val toolsPosition = intArrayOf(0, 0)
             toolsContainer.getLocationInWindow(toolsPosition)
@@ -119,16 +135,6 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         toolsContainer.setItemViewCacheSize(0)
         // 快速购买
         quick.setOnClickListener { onToolsAdd(quick.tag as Int) }
-
-        userTool?.also { tools ->
-            toolsContainer.adapter = ToolsAdapter(userTool)
-            // 设置资产
-            onPropertyUpdate(tools.property)
-            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
-            shakeAnimator.setTarget(quick)
-            shakeQuickAdd()
-            updateQuickAdd()
-        }
     }
 
     /**
@@ -170,12 +176,16 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
     /**
      * 快速购买的图片和文字
      */
-    private fun updateQuickAdd() {
-        val tool = userTool?.getQuickTool()
+    private fun updateQuickAdd(tool: ToolBean?) {
         val fileName = "lottie/dog/ic_dog_level${tool?.level}.png"
         quick.levelImage.setImageDrawable(Drawable.createFromStream(context?.assets?.open(fileName), null))
         quick.levelText.text = tool?.level.toString()
+        quick.tag = tool?.level
         Log.i(TAG(), "updateQuickAdd with level ${tool?.level}")
+    }
+
+    private fun updatePropertySpeed(value: BigDecimal) {
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(value))
     }
 
     /**
@@ -206,10 +216,6 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-//    override fun onToolsAdd(level: Int) {
-//        Log.i(TAG(), "onToolsAdd")
-//    }
-
     override fun onToolsAddSuccess(tool: ToolBean) {
         Log.i(TAG(), "onToolsAddSuccess")
         userTool?.also { tools ->
@@ -218,7 +224,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
             toolsContainer.adapter.notifyItemInserted(index)
             // 更新快速购买
-            updateQuickAdd()
+            updateQuickAdd(tools.getQuickTool())
         }
     }
 
@@ -230,10 +236,6 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         }
     }
 
-//    override fun onToolsRecycle(index: Int, tool: ToolBean) {
-//        Log.i(TAG(), "onToolsRecycle")
-//    }
-
     override fun onToolsRecycleSuccess(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsRecycleSuccess")
         userTool?.also { tools ->
@@ -242,38 +244,26 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
             toolsContainer.adapter.notifyItemRemoved(index)
             // 更新快速购买
-            updateQuickAdd()
+            updateQuickAdd(tools.getQuickTool())
         }
     }
-
-//    override fun onToolsApply(index: Int, tool: ToolBean) {
-//        Log.i(TAG(), "onToolsApply")
-//    }
 
     override fun onToolsApplySuccess(index: Int, tool: ToolBean) {
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-//    override fun onToolsMove(index: Int, tool: ToolBean) {
-//        Log.i(TAG(), "onToolsMove")
-//    }
-
     override fun onToolsMoveSuccess(index: Int, tool: ToolBean) {
         // 更新item
         toolsContainer.adapter.notifyItemChanged(index)
     }
-
-//    override fun onToolsMerge(tools: List<Pair<Int, ToolBean>>) {
-//        Log.i(TAG(), "onToolsMerge")
-//    }
 
     override fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>) {
         userTool?.also { userTools ->
             // 更新产生速率
             speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTools.getSpeed()))
             // 更新快速购买
-            updateQuickAdd()
+            updateQuickAdd(userTools.getQuickTool())
             toolsContainer.adapter.notifyItemRemoved(tools[0].first)
             toolsContainer.adapter.notifyItemChanged(tools[1].first)
         }
@@ -297,7 +287,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
             beatAnimator.start()
         }
         // 更新快速购买
-        updateQuickAdd()
+        updateQuickAdd(userTool?.getQuickTool())
     }
 
     override fun onCoefficient(coefficient: BigDecimal) {
