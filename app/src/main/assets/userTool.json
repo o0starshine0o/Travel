@@ -5,7 +5,38 @@
   "bestItemId": 1,
   "bestItemGoldPrice": "100.00",
   "itemShow": -1,
-  "items": null,
+  "items": [
+    {
+      "item": {
+        "itemId": 1,
+        "itemBuyStyle": 1,
+        "itemGoldPrice": "1.11e",
+        "itemRedPacketPrice": 100,
+        "itemGoldGenerateSpeed": "4"
+      },
+      "index": 0
+    },
+    {
+      "item": {
+        "itemId": 2,
+        "itemBuyStyle": 1,
+        "itemGoldPrice": "1.11e",
+        "itemRedPacketPrice": 100,
+        "itemGoldGenerateSpeed": "8"
+      },
+      "index": 4
+    },
+    {
+      "item": {
+        "itemId": 3,
+        "itemBuyStyle": 1,
+        "itemGoldPrice": "1.11e",
+        "itemRedPacketPrice": 100,
+        "itemGoldGenerateSpeed": "16"
+      },
+      "index": 8
+    }
+  ],
   "produceQuick": {
     "start": 0,
     "times": 0,

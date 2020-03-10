@@ -14,7 +14,6 @@ import com.qicode.cycle.CycleDrawable
 import com.qicode.extension.TAG
 import com.qicode.extension.dp
 import com.qicode.merge.data.ToolBean
-import com.qicode.merge.data.Tools
 import com.qicode.merge.ui.ToolsFragment
 import kotlinx.android.synthetic.main.view_travel.*
 import java.math.BigDecimal
@@ -46,13 +45,6 @@ class MergeFragment : ToolsFragment() {
 
     override fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View {
         return inflater.inflate(R.layout.view_travel, travelContainer, false)
-    }
-
-    override fun onToolsAdd(level: Int) {
-        // todo: 进行网络请求，如果返回成功过执行添加操作
-        userTool?.apply {
-            onToolsAddSuccess(ToolBean(this, Tools.ADD[0], Tools.ADD[1], 1))
-        }
     }
 
     override fun onToolsRecycle(index: Int, tool: ToolBean) {

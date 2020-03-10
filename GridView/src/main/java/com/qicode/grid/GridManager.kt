@@ -70,19 +70,35 @@ class GridManager(
 
     override fun onAttachedToWindow(view: RecyclerView) {
         super.onAttachedToWindow(view)
-        view.post {
-            itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
-            itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
-            Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
-            // 计算position
-            for (i in 0 until row) {
-                for (j in 0 until col) {
-                    position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
-                    Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
+        view.viewTreeObserver.addOnPreDrawListener {
+            if (itemHeight <= 0.0001f || itemWidth <= 0.0001f) {
+                itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
+                itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
+                Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
+                // 计算position
+                for (i in 0 until row) {
+                    for (j in 0 until col) {
+                        position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
+                        Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
+                    }
                 }
+                onGridFinish?.invoke(position, itemWidth, itemHeight)
             }
-            onGridFinish?.invoke(position, itemWidth, itemHeight)
+            true
         }
+//        view.post {
+//            itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
+//            itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
+//            Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
+//            // 计算position
+//            for (i in 0 until row) {
+//                for (j in 0 until col) {
+//                    position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
+//                    Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
+//                }
+//            }
+//            onGridFinish?.invoke(position, itemWidth, itemHeight)
+//        }
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {

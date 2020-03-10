@@ -16,10 +16,10 @@ interface ToolsOperateListener {
      */
     fun onToolsCancel(index: Int, tool: ToolBean)
 
-    /**
-     * 添加一个tool
-     */
-    fun onToolsAdd(level: Int)
+//    /**
+//     * 添加一个tool
+//     */
+//    fun onToolsAdd(level: Int)
 
     /**
      * 添加了一个tool

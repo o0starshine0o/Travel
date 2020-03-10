@@ -134,7 +134,7 @@ abstract class ToolsFragment : Fragment(), ToolsOperateListener {
         // 去掉RecycleView的离屏缓存
         toolsContainer.setItemViewCacheSize(0)
         // 快速购买
-        quick.setOnClickListener { onToolsAdd(quick.tag as Int) }
+//        quick.setOnClickListener { onToolsAdd(quick.tag as Int) }
     }
 
     /**
