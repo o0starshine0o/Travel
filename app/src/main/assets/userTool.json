@@ -1,41 +1,14 @@
 {
-  "gold": "0",
+  "gold": "10.01w",
+  "level": 1,
+  "goldSpeed": "0.00",
   "bestItemId": 1,
-  "items": [
-    {
-      "item": {
-        "itemId": 1,
-        "itemBuyStyle": 1,
-        "itemGoldPrice": "1.11e",
-        "itemRedPacketPrice": 100,
-        "itemGoldGenerateSpeed": "4"
-      },
-      "index": 0
-    },
-    {
-      "item": {
-        "itemId": 2,
-        "itemBuyStyle": 1,
-        "itemGoldPrice": "1.11e",
-        "itemRedPacketPrice": 100,
-        "itemGoldGenerateSpeed": "8"
-      },
-      "index": 4
-    },
-    {
-      "item": {
-        "itemId": 3,
-        "itemBuyStyle": 1,
-        "itemGoldPrice": "1.11e",
-        "itemRedPacketPrice": 100,
-        "itemGoldGenerateSpeed": "16"
-      },
-      "index": 8
-    }
-  ],
+  "bestItemGoldPrice": "100.00",
+  "itemShow": -1,
+  "items": null,
   "produceQuick": {
-    "start": 1583224553,
-    "times": 120,
-    "param": 80
+    "start": 0,
+    "times": 0,
+    "param": 0
   }
 }

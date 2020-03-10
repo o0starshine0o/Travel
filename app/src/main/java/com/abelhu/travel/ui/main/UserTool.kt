@@ -22,7 +22,7 @@ data class UserTool(
     // 快速购买的最优的道具价格
     var bestItemGoldPrice: String,
     // 道具信息
-    var items: List<Items>,
+    var items: List<Items>?,
     // 加速信息
     var produceQuick: ProduceQuick,
     // 监听器
@@ -53,7 +53,7 @@ data class UserTool(
         property = ToolBean.getValue(gold)
         // 需要把List<Items>转换成List<ToolBean>
         toolList = MutableList(0) { ToolBean(this) }
-        items.forEach { it.apply { toolList.add(ToolBean(this@UserTool, index / 4, index % 4, item.itemId, ToolBean.getValue(item.itemGoldGenerateSpeed))) } }
+        items?.forEach { it.apply { toolList.add(ToolBean(this@UserTool, index / 4, index % 4, item.itemId, ToolBean.getValue(item.itemGoldGenerateSpeed))) } }
         // 增益值， 需要再toolList初始化之后进行
         coefficient = BigDecimal(produceQuick.param / 100.0 + 1)
     }

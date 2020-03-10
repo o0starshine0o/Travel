@@ -44,12 +44,12 @@ dependencies {
     // 工具类
     implementation 'com.github.qicodes:utils:1.2.7'
     // 绘制背景九宫格
-    implementation project(path: ':GridView')
-//    implementation 'com.github.qicodes:GridView:1.0.7'
+//    implementation project(path: ':GridView')
+    implementation 'com.github.qicodes:GridView:1.0.9'
     // 无限循环滚动的Drawable
 //    implementation project(path: ':CycleDrawable')
     implementation 'com.github.qicodes:CycleDrawable:1.0.1'
     // 合成玩法
-    implementation project(path: ':Merge')
-//    implementation 'com.github.qicodes:Merge:1.1.0'
+//    implementation project(path: ':Merge')
+    implementation 'com.github.qicodes:Merge:1.1.2'
 }
