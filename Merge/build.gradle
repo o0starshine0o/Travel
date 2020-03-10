@@ -36,6 +36,6 @@ dependencies {
     // 工具类，本地或者网络库
     api 'com.github.qicodes:utils:1.2.7'
     // 绘制背景九宫格
-    implementation project(path: ':GridView')
-//    api 'com.github.qicodes:GridView:1.0.7'
+//    implementation project(path: ':GridView')
+    api 'com.github.qicodes:GridView:1.1.4'
 }
