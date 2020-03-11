@@ -2,10 +2,11 @@ package com.qicode.merge.data
 
 import android.util.Log
 import com.qicode.extension.TAG
+import com.qicode.merge.ui.HolderHelp
 import java.math.BigDecimal
 import kotlin.math.max
 
-abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
+abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener, HolderHelp {
 
     companion object {
         // 约定（-1， -1）表示增加tool
@@ -17,7 +18,6 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
         // 其他约定，比如更换工具
         val APPLY = intArrayOf(-100, -100)
     }
-
 
     /**
      * 保存所有的工具，需要服务器来设定

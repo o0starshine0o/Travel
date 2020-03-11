@@ -2,6 +2,7 @@ package com.qicode.merge.ui
 
 import android.animation.AnimatorInflater
 import android.content.ClipData
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
@@ -18,7 +19,11 @@ import com.qicode.merge.data.Tools
 import kotlinx.android.synthetic.main.item_tool.view.*
 import java.math.BigDecimal
 
-class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+interface HolderHelp {
+    fun toolDrawable(context: Context, level: Int): Drawable
+}
+
+class ToolsHolder(private val view: View, private val help: HolderHelp) : RecyclerView.ViewHolder(view) {
     var tools: Tools? = null
     lateinit var bean: ToolBean
     var handler = Handler()
@@ -33,8 +38,7 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         // 根据保存的数据，设置item的位置
         (view.layoutParams as GridManager.LayoutParams).apply { row = bean.row;col = bean.col }
         // 设置文本， 图片
-        val fileName = "lottie/dog/ic_dog_level${bean.level}.png"
-        view.image.setImageDrawable(Drawable.createFromStream(view.context.assets.open(fileName), null))
+        view.image.setImageDrawable(help.toolDrawable(view.context, bean.level))
         view.level.text = bean.level.toString()
         // 设置view可见
         view.visibility = View.VISIBLE

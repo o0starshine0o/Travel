@@ -1,5 +1,9 @@
 package com.abelhu.travel.ui.main
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
@@ -37,6 +41,17 @@ data class UserTool(
      * 快速购买
      */
     override fun getQuickTool() = ToolBean(this, level = bestItemId)
+
+    /**
+     * 工具对应的图片
+     */
+    override fun toolDrawable(context: Context, level: Int): Drawable {
+        return try {
+            Drawable.createFromStream(context.assets.open("lottie/dog/ic_dog_level${level}.png"), null)
+        } catch (e: Exception) {
+            ColorDrawable(Color.TRANSPARENT)
+        }
+    }
 
     /**
      * 需要把Items转换成ToolBean

@@ -3,7 +3,6 @@ package com.qicode.merge.ui
 import android.animation.AnimatorInflater
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
@@ -289,11 +288,13 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
      * 快速购买的图片和文字
      */
     private fun updateQuickAdd(tool: ToolBean?) {
-        val fileName = "lottie/dog/ic_dog_level${tool?.level}.png"
-        quick.levelImage.setImageDrawable(Drawable.createFromStream(context?.assets?.open(fileName), null))
-        quick.levelText.text = tool?.level.toString()
-        quick.tag = tool?.level
-        Log.i(TAG(), "updateQuickAdd with level ${tool?.level}")
+        if (context == null || tool == null) return
+        userTool?.apply {
+            quick.levelImage.setImageDrawable(toolDrawable(context, tool.level))
+            quick.levelText.text = tool.level.toString()
+            quick.tag = tool.level
+            Log.i(TAG(), "updateQuickAdd with level ${tool.level}")
+        }
     }
 
     /**
