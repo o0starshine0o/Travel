@@ -16,11 +16,6 @@ interface ToolsOperateListener {
      */
     fun onToolsCancel(index: Int, tool: ToolBean)
 
-//    /**
-//     * 添加一个tool
-//     */
-//    fun onToolsAdd(level: Int)
-
     /**
      * 添加了一个tool
      */
@@ -37,7 +32,7 @@ interface ToolsOperateListener {
     fun onToolsRecycle(index: Int, tool: ToolBean)
 
     /**
-     * 删除tool
+     * 删除tool成功
      */
     fun onToolsRecycleSuccess(index: Int, tool: ToolBean)
 
@@ -62,12 +57,12 @@ interface ToolsOperateListener {
     fun onToolsMoveSuccess(index: Int, tool: ToolBean)
 
     /**
-     * 工具被合成，返回合成后的工具
+     * 工具被合成
      */
     fun onToolsMerge(tools: List<Pair<Int, ToolBean>>)
 
     /**
-     * 工具被合成，返回合成后的工具
+     * 工具被合成成功
      */
     fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>)
 
@@ -85,6 +80,11 @@ interface ToolsOperateListener {
      * 更新总资产
      */
     fun onPropertyUpdate(now: BigDecimal)
+
+    /**
+     * 更新资产生产速度
+     */
+    fun onPropertySpeed(value: BigDecimal)
 
     /**
      * 更改生成资产的系数

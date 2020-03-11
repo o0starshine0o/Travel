@@ -51,7 +51,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
                 // 设置资产
                 onPropertyUpdate(value.property)
                 // 更新资产生产速度
-                updatePropertySpeed(value.getSpeed())
+                onPropertySpeed(value.getSpeed())
                 // 启动快速购买动画
                 shakeQuickAdd()
             }
@@ -126,12 +126,13 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     override fun onToolsAddSuccess(tool: ToolBean) {
         Log.i(TAG(), "onToolsAddSuccess")
         userTool?.apply {
+            // 更新工具
             val index = addTool(tool)
-            // 更新产生速率
-            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(getSpeed()))
             toolsContainer.adapter.notifyItemInserted(index)
-            // 更新快速购买
-            updateQuickAdd(getQuickTool())
+            // 更新产生速率
+            onPropertySpeed(getSpeed())
+            // 更新总资产
+            onPropertyUpdate(property)
         }
     }
 
@@ -151,10 +152,11 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     override fun onToolsRecycleSuccess(index: Int, tool: ToolBean) {
         Log.i(TAG(), "onToolsRecycleSuccess: $index")
         userTool?.also { tools ->
+            // 更新工具
             tools.recycleTool(tool)
-            // 更新产生速率
-            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
             toolsContainer.adapter.notifyItemRemoved(index)
+            // 更新产生速率
+            onPropertySpeed(tools.getSpeed())
             // 更新快速购买
             updateQuickAdd(tools.getQuickTool())
         }
@@ -191,9 +193,10 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         Log.i(TAG(), "onToolsMerge")
         userTool?.also { userTools ->
             // 更新产生速率
-            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(userTools.getSpeed()))
+            onPropertySpeed(userTools.getSpeed())
             // 更新快速购买
             updateQuickAdd(userTools.getQuickTool())
+            //更新工具
             toolsContainer.adapter.notifyItemRemoved(tools[0].first)
             toolsContainer.adapter.notifyItemChanged(tools[1].first)
         }
@@ -222,11 +225,21 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         updateQuickAdd(userTool?.getQuickTool())
     }
 
+    /**
+     * 更新资产生产速度
+     */
+    override fun onPropertySpeed(value: BigDecimal) {
+        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(value))
+    }
+
+    /**
+     * 更新加速系数
+     */
     override fun onCoefficient(coefficient: BigDecimal) {
         userTool?.also { tools ->
             tools.coefficient = coefficient
             // 更新产生速率
-            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
+            onPropertySpeed(tools.getSpeed())
             // 界面展示
             if (tools.coefficient > BigDecimal.ONE) {
                 // 加速
@@ -270,13 +283,6 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             // 设置取消区域
             cancel = Tools.CANCEL
         }
-    }
-
-    /**
-     * 更新资产生产速度
-     */
-    private fun updatePropertySpeed(value: BigDecimal) {
-        speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(value))
     }
 
     /**
