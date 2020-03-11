@@ -32,7 +32,7 @@ interface ToolsViewHelp {
     fun onToolAdd(tool: ToolBean?)
     fun onToolRecycle(index: Int, tool: ToolBean)
     fun onToolApply(index: Int, tool: ToolBean)
-    fun onToolMove(index: Int, tool: ToolBean)
+    fun onToolMove(index: Int, position: IntArray, tool: ToolBean)
     fun onToolsMerge(tools: List<Pair<Int, ToolBean>>)
     fun onToolsExchange(tools: List<Pair<Int, ToolBean>>)
 }
@@ -173,9 +173,9 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         toolsContainer.adapter.notifyItemChanged(index)
     }
 
-    override fun onToolsMove(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsMove: $index")
-        helper?.onToolMove(index, tool)
+    override fun onToolsMove(index: Int, position: IntArray, tool: ToolBean) {
+        Log.i(TAG(), "onToolsMove: $index, from[${position[0]}, ${position[1]}] to [${tool.row}, ${tool.col}]")
+        helper?.onToolMove(index, position, tool)
     }
 
     override fun onToolsMoveSuccess(index: Int, tool: ToolBean) {

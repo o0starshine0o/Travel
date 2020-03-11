@@ -49,7 +49,7 @@ interface ToolsOperateListener {
     /**
      * 工具被移动
      */
-    fun onToolsMove(index: Int, tool: ToolBean)
+    fun onToolsMove(index: Int, position: IntArray, tool: ToolBean)
 
     /**
      * 工具被移动成功

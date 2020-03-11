@@ -102,7 +102,7 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
                 val target = getTool(row, col)
                 when {
                     // 移动tool
-                    target == null -> listener.onToolsMove(index, moveTool(origin, row, col))
+                    target == null -> listener.onToolsMove(index, intArrayOf(origin.row, origin.col), moveTool(origin, row, col))
                     // 在原地
                     target.second == origin -> listener.onToolsCancel(index, origin)
                     // 合并tool

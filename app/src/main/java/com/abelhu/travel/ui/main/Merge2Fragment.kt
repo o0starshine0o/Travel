@@ -74,7 +74,7 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
         if (true) toolsView.onToolsApplySuccess(index, tool)
     }
 
-    override fun onToolMove(index: Int, tool: ToolBean) {
+    override fun onToolMove(index: Int, position: IntArray, tool: ToolBean) {
         toolsView.onToolsMoveSuccess(index, tool)
     }
 
