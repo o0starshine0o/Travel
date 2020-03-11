@@ -55,6 +55,9 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             // 计算产生的资源
             val current = System.currentTimeMillis()
             val resource = BigDecimal((current - updateTime) / 1000) * propertyPer * coefficient
+            // 查看数据
+            Log.i(TAG(), "propertyShow tools[${row}, ${col}] with resource: $resource")
+            Log.i(TAG(), " resource[$resource] = time[${(current - updateTime) / 1000}] * propertyPer[$propertyPer] * coefficient[$coefficient]")
             if (resource > BigDecimal.ZERO) {
                 // 更新tool
                 updateTime = current
@@ -69,8 +72,6 @@ class ToolsHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             }
             // 准备下一轮更新
             handler.postDelayed(this@ToolsHolder::propertyShow, 4000)
-            // 查看数据
-            Log.i(TAG(), "propertyShow tools[${row}, ${col}] with resource: $resource")
         }
     }
 
