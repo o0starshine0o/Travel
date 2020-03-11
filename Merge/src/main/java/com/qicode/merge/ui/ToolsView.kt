@@ -61,6 +61,14 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     private val shakeAnimator = AnimatorInflater.loadAnimator(context, R.animator.shake)
     private var travelView: View? = null
     var helper: ToolsViewHelp? = null
+        set(value) {
+            field = value
+            value?.apply {
+                // travelContainer添加一个的view
+                val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                travelContainer.addView(travelView(LayoutInflater.from(context), travelContainer).apply { travelView = this }, params)
+            }
+        }
 
     init {
         addView(LayoutInflater.from(context).inflate(R.layout.fragment_tools, this, false).apply {
@@ -78,9 +86,6 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             }
             // 去掉RecycleView的离屏缓存
             toolsContainer.setItemViewCacheSize(0)
-            // travelContainer添加一个的view
-            val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            helper?.also { travelContainer.addView(it.travelView(LayoutInflater.from(context), travelContainer).apply { travelView = this }, params) }
             // 设置快速购买的动画
             shakeAnimator.setTarget(quick)
             // 快速购买的点击事件
