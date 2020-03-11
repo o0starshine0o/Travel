@@ -45,7 +45,7 @@ dependencies {
     implementation 'com.github.qicodes:utils:1.2.7'
     // 绘制背景九宫格
 //    implementation project(path: ':GridView')
-    implementation 'com.github.qicodes:GridView:1.1.4'
+    implementation 'com.github.qicodes:GridView:1.1.7'
     // 无限循环滚动的Drawable
 //    implementation project(path: ':CycleDrawable')
     implementation 'com.github.qicodes:CycleDrawable:1.1.4'

@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import com.qicode.extension.TAG
 
 class GridManager(
@@ -70,35 +71,7 @@ class GridManager(
 
     override fun onAttachedToWindow(view: RecyclerView) {
         super.onAttachedToWindow(view)
-        view.viewTreeObserver.addOnPreDrawListener {
-            if (itemHeight <= 0.0001f || itemWidth <= 0.0001f) {
-                itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
-                itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
-                Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
-                // 计算position
-                for (i in 0 until row) {
-                    for (j in 0 until col) {
-                        position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
-                        Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
-                    }
-                }
-                onGridFinish?.invoke(position, itemWidth, itemHeight)
-            }
-            true
-        }
-//        view.post {
-//            itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
-//            itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
-//            Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
-//            // 计算position
-//            for (i in 0 until row) {
-//                for (j in 0 until col) {
-//                    position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
-//                    Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
-//                }
-//            }
-//            onGridFinish?.invoke(position, itemWidth, itemHeight)
-//        }
+        view.viewTreeObserver.addOnPreDrawListener(PreDrawListener(view))
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
@@ -139,5 +112,28 @@ class GridManager(
     class LayoutParams(width: Int, height: Int) : RecyclerView.LayoutParams(width, height) {
         var row = 0
         var col = 0
+    }
+
+    inner class PreDrawListener(private val view: View) : ViewTreeObserver.OnPreDrawListener {
+        override fun onPreDraw(): Boolean {
+            if (width <= 0 || height <= 0) return true
+            if (itemWidth > 0 && itemHeight > 0) {
+                view.viewTreeObserver.removeOnPreDrawListener(this)
+                return true
+            }
+            itemWidth = (width - paddingStart - paddingEnd).toFloat() / col
+            itemHeight = (height - paddingTop - paddingBottom).toFloat() / row
+            Log.i(TAG(), "get item width-height:[$itemWidth, $itemHeight]")
+            if (itemHeight <= 0.00001f || itemWidth <= 0.00001f) return true
+            // 计算position
+            for (i in 0 until row) {
+                for (j in 0 until col) {
+                    position[i][j] = floatArrayOf(j * itemWidth + paddingStart, i * itemHeight + paddingTop)
+                    Log.i(TAG(), "get position[$i][$j]:[${position[i][j][0]}, ${position[i][j][1]}]")
+                }
+            }
+            onGridFinish?.invoke(position, itemWidth, itemHeight)
+            return true
+        }
     }
 }
