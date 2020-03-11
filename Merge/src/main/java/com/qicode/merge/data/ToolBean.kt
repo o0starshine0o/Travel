@@ -19,7 +19,7 @@ data class ToolBean(
     // 工具的最大等级
     var level: Int = Int.MIN_VALUE,
     // 工具每秒产生的资源数量
-    val propertyPer: BigDecimal = BigDecimal.ZERO,
+    var propertyPer: BigDecimal = BigDecimal.ZERO,
     // 工具上次产生资源的时间（单位：毫秒）
     var updateTime: Long = 0,
     // 基础价格

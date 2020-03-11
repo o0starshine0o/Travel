@@ -125,13 +125,13 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
 
     override fun onToolsAddSuccess(tool: ToolBean) {
         Log.i(TAG(), "onToolsAddSuccess")
-        userTool?.also { tools ->
-            val index = tools.addTool(tool)
+        userTool?.apply {
+            val index = addTool(tool)
             // 更新产生速率
-            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(tools.getSpeed()))
+            speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(getSpeed()))
             toolsContainer.adapter.notifyItemInserted(index)
             // 更新快速购买
-            updateQuickAdd(tools.getQuickTool())
+            updateQuickAdd(getQuickTool())
         }
     }
 

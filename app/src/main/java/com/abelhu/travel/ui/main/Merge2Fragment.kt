@@ -51,7 +51,10 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
     }
 
     override fun onToolAdd(tool: ToolBean?) {
-        tool?.apply { toolsView.onToolsAddSuccess(this) }
+        tool?.apply {
+            propertyPer = BigDecimal(8)
+            toolsView.onToolsAddSuccess(this)
+        }
     }
 
     override fun onSpeedUp() {

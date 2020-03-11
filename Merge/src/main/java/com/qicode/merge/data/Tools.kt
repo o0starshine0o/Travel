@@ -60,15 +60,13 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener {
     fun addTool(tool: ToolBean, rowMax: Int = 3, colMax: Int = 4): Int {
         Log.i(TAG(), "add tool with level: ${tool.level}")
         tool.run {
-            if (intArrayOf(row, col).contentEquals(ADD)) {
-                for (index in 0 until rowMax * colMax) {
-                    val i = index / colMax
-                    val j = index % colMax
-                    if (getTool(i, j) == null) {
-                        row = i
-                        col = j
-                        break
-                    }
+            for (index in 0 until rowMax * colMax) {
+                val i = index / colMax
+                val j = index % colMax
+                if (getTool(i, j) == null) {
+                    row = i
+                    col = j
+                    break
                 }
             }
             getList().add(this)
