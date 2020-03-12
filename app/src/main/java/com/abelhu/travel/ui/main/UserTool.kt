@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
+import com.qicode.extension.TAG
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
@@ -54,9 +56,22 @@ data class UserTool(
         }
     }
 
+    /**
+     * 工具对应的下标文案
+     */
     override fun toolLevel(level: Int) = level.toString()
 
+    /**
+     * 工具对应的下标是否显示
+     */
     override fun toolLevelVisibility(level: Int) = View.VISIBLE
+
+    /**
+     * 工具对应的其他内容
+     */
+    override fun toolPayLoads(view: View, payloads: MutableList<Any>) {
+        Log.i(TAG(), "toolPayLoads")
+    }
 
     /**
      * 需要把Items转换成ToolBean

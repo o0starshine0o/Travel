@@ -16,9 +16,12 @@ class ToolsAdapter(var tools: Tools) : RecyclerView.Adapter<ToolsHolder>() {
         return ToolsHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_tool, parent, false), tools)
     }
 
-
     override fun onBindViewHolder(holder: ToolsHolder, position: Int) {
         holder.onBind(tools, position)
+    }
+
+    override fun onBindViewHolder(holder: ToolsHolder, position: Int, payloads: MutableList<Any>) {
+        holder.onBind(tools, position, payloads)
     }
 
     override fun onViewRecycled(holder: ToolsHolder) {

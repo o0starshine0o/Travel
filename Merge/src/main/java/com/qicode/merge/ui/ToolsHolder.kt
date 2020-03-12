@@ -23,6 +23,7 @@ interface HolderHelp {
     fun toolDrawable(context: Context, level: Int): Drawable
     fun toolLevel(level: Int): String
     fun toolLevelVisibility(level: Int): Int
+    fun toolPayLoads(view: View, payloads: MutableList<Any>)
 }
 
 class ToolsHolder(private val view: View, private val help: HolderHelp) : RecyclerView.ViewHolder(view) {
@@ -31,7 +32,7 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
     var handler = Handler()
     private val animator = AnimatorInflater.loadAnimator(view.context, R.animator.property_show)
 
-    fun onBind(tools: Tools?, position: Int) {
+    fun onBind(tools: Tools?, position: Int, payloads: MutableList<Any>? = null) {
         this.tools = tools ?: return
         bean = tools.getList()[position]
         Log.i(TAG(), "onBind tools[${bean.row}, ${bean.col}]")
@@ -55,6 +56,8 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
         }
         // 设置动画
         propertyShow()
+        // 支持动效，或者其他额外内容
+        payloads?.apply { if (size > 0) help.toolPayLoads(view, this) }
     }
 
     private fun propertyShow() {

@@ -162,7 +162,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     }
 
     override fun onToolsApply(index: Int, tool: ToolBean) {
-        Log.i(TAG(), "onToolsApply: $index")
+        Log.i(TAG(), "onToolsApply index[$index] level[${tool.level}]")
         helper?.onToolApply(index, tool)
     }
 
@@ -197,7 +197,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             updateQuickAdd(userTools.getQuickTool())
             //更新工具
             toolsContainer.adapter.notifyItemRemoved(tools[0].first)
-            toolsContainer.adapter.notifyItemChanged(tools[1].first)
+            toolsContainer.adapter.notifyItemChanged(tools[1].first, true)
         }
     }
 
