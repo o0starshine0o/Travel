@@ -103,8 +103,8 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener, Ho
                 when {
                     // 移动tool
                     target == null -> listener.onToolsMove(index, intArrayOf(origin.row, origin.col), moveTool(origin, row, col))
-                    // 在原地
-                    target.second == origin -> listener.onToolsCancel(index, origin)
+                    // 在原地，只要是在原地，都默认为点击
+                    target.second == origin -> listener.onToolsClick(index, origin)
                     // 合并tool
                     target.second.level == origin.level -> listener.onToolsMerge(mergeTool((index to origin), target))
                     // 交换两个tool

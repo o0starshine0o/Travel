@@ -29,6 +29,7 @@ interface ToolsViewHelp {
     fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
     fun onSpeedUp()
     fun onToolAdd(tool: ToolBean?)
+    fun onToolClick(index: Int, tool: ToolBean)
     fun onToolRecycle(index: Int, tool: ToolBean)
     fun onToolApply(index: Int, tool: ToolBean)
     fun onToolMove(index: Int, position: IntArray, tool: ToolBean)
@@ -114,6 +115,22 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             // 显示回收站
             recycleContainer.visibility = View.VISIBLE
         }
+    }
+
+    override fun onToolsStopDrag(index: Int, tool: ToolBean) {
+        Log.i(TAG(), "onToolsStopDrag: Index[$index] Level[${tool.level}]")
+        // 由于意外导致拖拽停止默认为是点击
+        onToolsClick(index, tool)
+    }
+
+    override fun onToolsClick(index: Int, tool: ToolBean) {
+        Log.i(TAG(), "onToolsClick: Index[$index] Level[${tool.level}]")
+        // 更新item
+        toolsContainer.adapter.notifyItemChanged(index)
+        // 隐藏回收站
+        recycleContainer.visibility = View.INVISIBLE
+        // 外部处理
+        helper?.onToolClick(index, tool)
     }
 
     override fun onToolsCancel(index: Int, tool: ToolBean) {

@@ -50,8 +50,8 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
         view.setOnTouchListener { _, event ->
             when (event.action) {
                 // 注意：bind时候的position和drag时候的position可能已经由于（merge、delete、add等操作）不一样了，这里需要重新获取下目前的索引
-                MotionEvent.ACTION_DOWN -> drag(event, tools.getList().indexOf(bean))
-                else -> false
+                MotionEvent.ACTION_DOWN -> drag(event, tools.getList().indexOf(bean), bean)
+                else -> true
             }
         }
         // 设置动画
@@ -85,7 +85,7 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
         }
     }
 
-    private fun drag(event: MotionEvent, position: Int): Boolean {
+    private fun drag(event: MotionEvent, position: Int, tool: ToolBean): Boolean {
         tools?.listener?.onToolsSelect(position)
         // 隐藏view中的动画部分
         view.propertyContainer.visibility = View.INVISIBLE
@@ -95,10 +95,12 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
         val data = ClipData.newPlainText("position", position.toString())
         // 开始拖拽
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            view.startDragAndDrop(data, builder, view, View.DRAG_FLAG_OPAQUE)
+            val result = view.startDragAndDrop(data, builder, view, View.DRAG_FLAG_OPAQUE)
+            if (!result) tools?.listener?.onToolsStopDrag(position, tool)
         } else {
             @Suppress("DEPRECATION")
-            view.startDrag(data, builder, view, View.DRAG_FLAG_OPAQUE)
+            val result = view.startDrag(data, builder, view, 0)
+            if (!result) tools?.listener?.onToolsStopDrag(position, tool)
         }
         // 隐藏原始view
         view.visibility = View.INVISIBLE

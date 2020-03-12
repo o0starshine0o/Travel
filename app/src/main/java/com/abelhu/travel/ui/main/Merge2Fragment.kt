@@ -21,6 +21,10 @@ import java.math.BigDecimal
 class Merge2Fragment : Fragment(), ToolsViewHelp {
     private lateinit var toolsView: ToolsView
 
+    override fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View {
+        return inflater.inflate(R.layout.view_travel, travelContainer, false)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.tools_view, container, false).apply {
             // 旅行容器添加图片
@@ -31,15 +35,9 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
                 background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
                 post { (background as CycleDrawable).start() }
             }
-
-
             toolsView = findViewById(R.id.toolsView)
             toolsView.helper = this@Merge2Fragment
         }
-    }
-
-    override fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View {
-        return inflater.inflate(R.layout.view_travel, travelContainer, false)
     }
 
     override fun onResume() {
@@ -55,6 +53,9 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
             propertyPer = BigDecimal(8)
             toolsView.onToolsAddSuccess(this)
         }
+    }
+
+    override fun onToolClick(index: Int, tool: ToolBean) {
     }
 
     override fun onSpeedUp() {

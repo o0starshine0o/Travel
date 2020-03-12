@@ -12,6 +12,16 @@ interface ToolsOperateListener {
     fun onToolsSelect(index: Int)
 
     /**
+     * 点击tool
+     */
+    fun onToolsClick(index: Int, tool: ToolBean)
+
+    /**
+     * 由于不明原因导致拖拽停止，可能发生于点击时间太短
+     */
+    fun onToolsStopDrag(index: Int, tool: ToolBean)
+
+    /**
      * 取消对tool的操作
      */
     fun onToolsCancel(index: Int, tool: ToolBean)
