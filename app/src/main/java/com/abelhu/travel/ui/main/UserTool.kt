@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.view.View
 import com.qicode.merge.data.ToolBean
 import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
@@ -52,6 +53,10 @@ data class UserTool(
             ColorDrawable(Color.TRANSPARENT)
         }
     }
+
+    override fun toolLevel(level: Int) = level.toString()
+
+    override fun toolLevelVisibility(level: Int) = View.VISIBLE
 
     /**
      * 需要把Items转换成ToolBean

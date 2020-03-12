@@ -21,6 +21,8 @@ import java.math.BigDecimal
 
 interface HolderHelp {
     fun toolDrawable(context: Context, level: Int): Drawable
+    fun toolLevel(level: Int): String
+    fun toolLevelVisibility(level: Int): Int
 }
 
 class ToolsHolder(private val view: View, private val help: HolderHelp) : RecyclerView.ViewHolder(view) {
@@ -39,7 +41,8 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
         (view.layoutParams as GridManager.LayoutParams).apply { row = bean.row;col = bean.col }
         // 设置文本， 图片
         view.image.setImageDrawable(help.toolDrawable(view.context, bean.level))
-        view.level.text = bean.level.toString()
+        view.level.text = help.toolLevel(bean.level)
+        view.level.visibility = help.toolLevelVisibility(bean.level)
         // 设置view可见
         view.visibility = View.VISIBLE
         // 设置drag
