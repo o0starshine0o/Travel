@@ -3,6 +3,8 @@
 buildscript {
     ext.kotlin_version = '1.2.0'
     repositories {
+        //新添加的
+        mavenLocal()
         mavenCentral()
         jcenter()
         google()
@@ -19,6 +21,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
         google()

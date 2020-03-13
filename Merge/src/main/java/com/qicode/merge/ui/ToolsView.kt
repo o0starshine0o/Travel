@@ -43,6 +43,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     var userTool: Tools? = null
         set(value) {
             if (value != null) {
+                Log.i(TAG(), "set user tools Size[${value.getList().size}]")
                 field = value
                 if (toolsContainer.adapter == null) toolsContainer.adapter = ToolsAdapter(value)
                 else {
@@ -143,7 +144,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     }
 
     override fun onToolsAddSuccess(tool: ToolBean) {
-        Log.i(TAG(), "onToolsAddSuccess")
+        Log.i(TAG(), "onToolsAddSuccess Tool[${tool.level}]")
         userTool?.apply {
             // 更新工具
             val index = addTool(tool)
@@ -178,6 +179,8 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             onPropertySpeed(tools.getSpeed())
             // 更新快速购买
             updateQuickAdd(tools.getQuickTool())
+            // 查看缓存队列
+            tools.showCache()?.also { toolsContainer.adapter.notifyItemInserted(it) }
         }
     }
 
@@ -209,7 +212,9 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     }
 
     override fun onToolsMergeSuccess(tools: List<Pair<Int, ToolBean>>) {
-        Log.i(TAG(), "onToolsMerge")
+        val remove = "Remove Index(${tools[0].first}) [${tools[0].second.row}, ${tools[0].second.col}]"
+        val change = "Change Index(${tools[1].first}) [${tools[1].second.row}, ${tools[1].second.col}]"
+        Log.i(TAG(), "onToolsMergeSuccess $remove $change")
         userTool?.also { userTools ->
             // 更新产生速率
             onPropertySpeed(userTools.getSpeed())
@@ -218,6 +223,8 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             //更新工具
             toolsContainer.adapter.notifyItemRemoved(tools[0].first)
             toolsContainer.adapter.notifyItemChanged(tools[1].first, true)
+            // 查看缓存队列
+            userTools.showCache()?.also { toolsContainer.adapter.notifyItemInserted(it) }
         }
     }
 
@@ -244,9 +251,6 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         updateQuickAdd(userTool?.getQuickTool())
     }
 
-    /**
-     * 更新资产生产速度
-     */
     override fun onPropertySpeed(value: BigDecimal) {
         speed.text = toolsContainer.context.resources.getString(R.string.per_second, ToolBean.getText(value))
     }

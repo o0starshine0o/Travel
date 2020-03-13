@@ -51,5 +51,5 @@ dependencies {
     implementation 'com.github.qicodes:CycleDrawable:1.1.4'
     // 合成玩法
 //    implementation project(path: ':Merge')
-    implementation 'com.github.qicodes:Merge:1.2.4'
+    implementation 'com.github.qicodes:Merge:1.2.5'
 }

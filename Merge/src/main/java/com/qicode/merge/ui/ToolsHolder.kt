@@ -36,8 +36,9 @@ class ToolsHolder(private val view: View, private val help: HolderHelp) : Recycl
         this.tools = tools ?: return
         bean = tools.getList()[position]
         Log.i(TAG(), "onBind tools[${bean.row}, ${bean.col}]")
-        // 设置tool可见
-        bean.visibility = true
+        // 根据bean的显示属性判断bean是否在缓存队列，如果在缓存队列，直接跳过不显示
+        view.visibility = if (bean.visibility) View.VISIBLE else View.GONE
+        if (view.visibility == View.GONE) return
         // 根据保存的数据，设置item的位置
         (view.layoutParams as GridManager.LayoutParams).apply { row = bean.row;col = bean.col }
         // 设置文本， 图片

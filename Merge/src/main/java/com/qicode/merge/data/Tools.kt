@@ -4,6 +4,7 @@ import android.util.Log
 import com.qicode.extension.TAG
 import com.qicode.merge.ui.HolderHelp
 import java.math.BigDecimal
+import java.util.*
 import kotlin.math.max
 
 abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener, HolderHelp {
@@ -59,19 +60,47 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener, Ho
      */
     fun addTool(tool: ToolBean, rowMax: Int = 3, colMax: Int = 4): Int {
         Log.i(TAG(), "add tool with level: ${tool.level}")
-        tool.run {
-            for (index in 0 until rowMax * colMax) {
-                val i = index / colMax
-                val j = index % colMax
-                if (getTool(i, j) == null) {
-                    row = i
-                    col = j
-                    break
-                }
+        tool.apply {
+            // 新增的ToolBean默认是不可见的，直到寻找到对应的位置
+            visibility = false
+            getEmptyPosition(rowMax, colMax)?.also {
+                row = it / colMax
+                col = it % colMax
+                visibility = true
             }
             getList().add(this)
         }
         return getList().indexOf(tool)
+    }
+
+    /**
+     * 回收工具
+     * 注意：需要补充对应的回收价格
+     */
+    fun recycleTool(origin: ToolBean): ToolBean {
+        getList().remove(origin)
+        addProperty(origin.recyclePrice)
+        return origin
+    }
+
+    /**
+     * 从缓存队列中查找是否开源进行显示
+     *
+     * @return 在tool在列表中的索引
+     */
+    fun showCache(rowMax: Int = 3, colMax: Int = 4): Int? {
+        getList().forEach { tool ->
+            tool.takeIf { tool.index() >= rowMax * colMax }?.apply {
+                getEmptyPosition()?.also { index ->
+                    row = index / colMax
+                    col = index % colMax
+                    visibility = true
+                    Log.i(TAG(), "showCache Index($index) [$row, $col]}")
+                    return getList().indexOf(this)
+                }
+            }
+        }
+        return null
     }
 
     /**
@@ -184,12 +213,12 @@ abstract class Tools(var listener: ToolsOperateListener) : ToolsBeanListener, Ho
     }
 
     /**
-     * 回收工具
-     * 注意：需要补充对应的回收价格
+     * 获取可以使用的空位
      */
-    fun recycleTool(origin: ToolBean): ToolBean {
-        getList().remove(origin)
-        addProperty(origin.recyclePrice)
-        return origin
+    private fun getEmptyPosition(rowMax: Int = 3, colMax: Int = 4): Int? {
+        val set = HashSet<Int>()
+        getList().forEach { set.add(it.row * colMax + it.col) }
+        for (i in 0 until rowMax * colMax) if (i !in set) return i
+        return null
     }
 }
