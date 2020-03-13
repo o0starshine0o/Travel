@@ -28,6 +28,7 @@ import java.math.BigDecimal
 interface ToolsViewHelp {
     fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
     fun onSpeedUp()
+    fun onShop()
     fun onToolAdd(tool: ToolBean?)
     fun onToolClick(index: Int, tool: ToolBean)
     fun onToolRecycle(index: Int, tool: ToolBean)
@@ -92,6 +93,8 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             quick.setOnClickListener { helper?.onToolAdd(userTool?.getQuickTool()) }
             // 加速的点击事件
             speedup.setOnClickListener { helper?.onSpeedUp() }
+            // 商城的点击事件
+            shop.setOnClickListener { helper?.onShop() }
             // 设置拖拽释放监听
             setOnDragListener { _, event ->
                 // 拖动完成时，判断拖动到了哪里，再进行下一步的操作

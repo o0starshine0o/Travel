@@ -100,8 +100,6 @@ data class ToolBean(
         updateTime = listener.updateTime(this)
         // 每秒产生资源数量的系数，需要根据用户的行为来确定，一旦更改要应用到所有的实例
         coefficient = listener.coefficient(this)
-//        // 要转换成BigDecimal类型
-//        propertyPer = listener.propertyPerSecond(this)
         // 要转换成BigDecimal类型
         basePrice = listener.basePrice(this)
         // 要转换成BigDecimal类型
@@ -113,7 +111,8 @@ data class ToolBean(
      */
     fun addLevel() {
         level++
-//        propertyPer = listener.propertyPerSecond(this)
     }
+
+    fun index() = row * 4 + col
 
 }
