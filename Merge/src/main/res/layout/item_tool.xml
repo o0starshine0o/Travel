@@ -42,11 +42,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@mipmap/icon_gold_up"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -55,7 +56,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/add_resource"
-            android:textColor="@android:color/holo_orange_dark" />
+            android:textColor="#FFAE1C" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

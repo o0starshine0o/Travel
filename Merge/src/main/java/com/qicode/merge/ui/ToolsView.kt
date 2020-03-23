@@ -24,6 +24,7 @@ import com.qicode.merge.exception.NotEnoughPropertyError
 import com.qicode.merge.exception.NotEnoughSpaceError
 import kotlinx.android.synthetic.main.fragment_tools.view.*
 import java.math.BigDecimal
+import java.text.DecimalFormat
 
 interface ToolsViewHelp {
     fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
@@ -93,9 +94,9 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             // 快速购买的点击事件
             quick.setOnClickListener { helper?.onToolAdd(userTool?.getQuickTool()) }
             // 加速的点击事件
-            speedup.setOnClickListener { helper?.onSpeedUp() }
+            speedupContainer.setOnClickListener { helper?.onSpeedUp() }
             // 商城的点击事件
-            shop.setOnClickListener { helper?.onShop() }
+            shopContainer.setOnClickListener { helper?.onShop() }
             // 设置拖拽释放监听
             setOnDragListener { _, event ->
                 // 拖动完成时，判断拖动到了哪里，再进行下一步的操作
@@ -258,21 +259,35 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     /**
      * 更新加速系数
      */
-    override fun onCoefficient(coefficient: BigDecimal) {
+    @Suppress("DEPRECATION")
+    override fun onCoefficient(coefficient: BigDecimal, second: Int) {
         userTool?.also { tools ->
-            tools.coefficient = coefficient
+            tools.coefficient = if (second > 0) coefficient else BigDecimal.ONE
             // 更新产生速率
             onPropertySpeed(tools.getSpeed())
             // 界面展示
             if (tools.coefficient > BigDecimal.ONE) {
                 // 加速
-                speedup.text = speedup.context.resources.getString(R.string.speedup_with, coefficient)
-                speed.setTextColor(Color.GREEN)
+                val format = DecimalFormat("00")
+                speedup.text = speedup.context.resources.getString(R.string.speedup_with, format.format(second / 60), format.format(second % 60))
+                val rocketDrawable = resources.getDrawable(R.mipmap.icon_rocket).apply { setBounds(0, 0, 20.dp.toInt(), 20.dp.toInt()) }
+                speedup.setCompoundDrawables(rocketDrawable, null, null, null)
+                speedup.setTextColor(Color.parseColor("#FE6C48"))
+                // 资产界面
+                speed.setTextColor(Color.parseColor("#1BB52A"))
+                iconSub.visibility = View.VISIBLE
             } else {
                 // 恢复到正常速度
                 speedup.text = speedup.context.resources.getString(R.string.speedup)
-                speed.setTextColor(Color.BLACK)
+                val speedDrawable = resources.getDrawable(R.mipmap.icon_speed_up).apply { setBounds(0, 0, 20.dp.toInt(), 20.dp.toInt()) }
+                speedup.setCompoundDrawables(speedDrawable, null, null, null)
+                speedup.setTextColor(Color.parseColor("#303030"))
+                // 资产界面
+                speed.setTextColor(Color.parseColor("#3b3b3b"))
+                iconSub.visibility = View.GONE
             }
+            // 刷新界面
+            if (second > 0) handler.postDelayed({ onCoefficient(coefficient, second - 1) }, 1000)
         }
     }
 
@@ -317,6 +332,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             quick.levelImage.setImageDrawable(toolDrawable(context, tool.level))
             quick.levelText.text = tool.level.toString()
             quick.tag = tool.level
+            quick.quickBuy.text = ToolBean.getText(tool.basePrice)
             Log.i(TAG(), "updateQuickAdd with level ${tool.level}")
         }
     }

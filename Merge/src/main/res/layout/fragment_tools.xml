@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.35" />
+        app:layout_constraintGuide_percent="0.4" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/mergeContainer"
@@ -63,7 +63,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/functionContainer"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_margin="12dp"
             android:background="@drawable/round_rect_gray"
             android:clipChildren="false"
@@ -71,18 +71,31 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/shop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="30dp"
-                android:paddingTop="20dp"
-                android:paddingRight="30dp"
-                android:paddingBottom="20dp"
-                android:text="@string/shop"
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/shopContainer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.3">
+
+                <TextView
+                    android:id="@+id/shop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:drawableStart="@mipmap/icon_shop"
+                    android:drawableLeft="@mipmap/icon_shop"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:text="@string/shop"
+                    android:textColor="#303030"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/quick"
@@ -92,8 +105,8 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/speedup"
-                app:layout_constraintStart_toEndOf="@+id/shop"
+                app:layout_constraintEnd_toStartOf="@id/speedupContainer"
+                app:layout_constraintStart_toEndOf="@+id/shopContainer"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <android.support.constraint.ConstraintLayout
@@ -103,8 +116,8 @@
 
                     <ImageView
                         android:id="@+id/levelImage"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:src="@mipmap/ic_launcher_round"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -114,12 +127,10 @@
 
                     <TextView
                         android:id="@+id/levelText"
-                        android:layout_width="30dp"
+                        android:layout_width="28dp"
                         android:layout_height="20dp"
                         android:background="@drawable/round_rect_white"
                         android:gravity="center"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
                         android:text="@string/app_name"
                         android:textColor="@android:color/holo_orange_dark"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -128,8 +139,12 @@
                 </android.support.constraint.ConstraintLayout>
 
                 <TextView
+                    android:id="@+id/quickBuy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawableStart="@mipmap/icon_gold_up"
+                    android:drawableLeft="@mipmap/icon_gold_up"
+                    android:drawablePadding="4dp"
                     android:gravity="center"
                     android:text="@string/quick_buy"
                     android:textColor="@android:color/white" />
@@ -145,8 +160,8 @@
                 android:orientation="vertical"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/speedup"
-                app:layout_constraintStart_toEndOf="@+id/shop"
+                app:layout_constraintEnd_toStartOf="@id/speedupContainer"
+                app:layout_constraintStart_toEndOf="@+id/shopContainer"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="invisible">
 
@@ -173,18 +188,30 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/speedup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="30dp"
-                android:paddingTop="20dp"
-                android:paddingRight="30dp"
-                android:paddingBottom="20dp"
-                android:text="@string/speedup"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/speedupContainer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.3">
+
+                <TextView
+                    android:id="@+id/speedup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:drawableStart="@mipmap/icon_speed_up"
+                    android:drawableLeft="@mipmap/icon_speed_up"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:text="@string/speedup"
+                    android:textColor="#303030"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
@@ -200,14 +227,28 @@
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="12dp"
-            android:src="@mipmap/ic_launcher_round"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            android:src="@mipmap/icon_gold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/iconSub"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@mipmap/icon_lighting"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/icon"
+            app:layout_constraintEnd_toEndOf="@id/icon"
+            tools:ignore="ContentDescription"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/property"
@@ -215,7 +256,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:text="@string/app_name"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="#F06700"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent" />
@@ -226,11 +267,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
+            android:layout_marginTop="2dp"
             android:text="@string/app_name"
-            android:textColor="@android:color/black"
+            android:textColor="#3B3B3B"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/icon"
             app:layout_constraintStart_toEndOf="@id/icon"
+            app:layout_constraintTop_toBottomOf="@id/property"
             tools:ignore="SmallSp" />
 
     </android.support.constraint.ConstraintLayout>

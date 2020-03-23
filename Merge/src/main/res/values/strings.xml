@@ -3,7 +3,7 @@
     <string name="shop">商城</string>
     <string name="quick_buy">快速购买</string>
     <string name="speedup">加速</string>
-    <string name="speedup_with">X(%1$f)</string>
+    <string name="speedup_with">%1$s:%2$s</string>
     <string name="recycle_property">回收可得 %1$s</string>
 
 

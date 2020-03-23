@@ -99,5 +99,5 @@ interface ToolsOperateListener {
     /**
      * 更改生成资产的系数
      */
-    fun onCoefficient(coefficient: BigDecimal)
+    fun onCoefficient(coefficient: BigDecimal, second: Int = 0)
 }
