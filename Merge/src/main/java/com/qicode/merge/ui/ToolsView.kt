@@ -1,6 +1,8 @@
 package com.qicode.merge.ui
 
 import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.Handler
@@ -28,6 +30,7 @@ import java.text.DecimalFormat
 
 interface ToolsViewHelp {
     fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
+    fun moreView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
     fun onSpeedUp()
     fun onShop()
     fun onToolAdd(tool: ToolBean?)
@@ -68,8 +71,11 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             field = value
             value?.apply {
                 // travelContainer添加一个的view
-                val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                travelContainer.addView(travelView(LayoutInflater.from(context), travelContainer).apply { travelView = this }, params)
+                val travelParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                travelContainer.addView(travelView(LayoutInflater.from(context), travelContainer).apply { travelView = this }, travelParams)
+                // moreContainer添加一个的view
+                val moreParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                moreContainer.addView(moreView(LayoutInflater.from(context), moreContainer), moreParams)
             }
         }
 
@@ -108,6 +114,9 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
                 initGridManager()
                 true
             }
+            // 设置更多精彩切换监听
+            towardsRight.setOnClickListener { showMore() }
+            towardsLeft.setOnClickListener { showMerge() }
         })
     }
 
@@ -371,5 +380,40 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         }
         // 隐藏回收站
         recycleContainer.visibility = View.INVISIBLE
+    }
+
+    /**
+     * 显示更多精彩
+     */
+    private fun showMore(during: Long = 300) {
+        towardsRight.visibility = View.GONE
+        towardsLeft.visibility = View.VISIBLE
+        moreContainer.visibility = View.VISIBLE
+        val set = AnimatorSet()
+        val toolsOut = ObjectAnimator.ofFloat(toolsContainer, "translationX", 0f, (0 - width).toFloat()).apply { duration = during }
+        val toolsAlpha = ObjectAnimator.ofFloat(toolsContainer, "alpha", 1f, 0.8f).apply { duration = during }
+        val functionOut = ObjectAnimator.ofFloat(functionContainer, "translationX", 0f, (0 - width).toFloat()).apply { duration = during }
+        val functionAlpha = ObjectAnimator.ofFloat(functionContainer, "alpha", 1f, 0.8f).apply { duration = during }
+        val moreIn = ObjectAnimator.ofFloat(moreContainer, "translationX", width.toFloat(), 0f).apply { duration = during }
+        val moreAlpha = ObjectAnimator.ofFloat(moreContainer, "alpha", 0.8f, 1f).apply { duration = during }
+        set.playTogether(toolsOut, toolsAlpha, functionOut, functionAlpha, moreIn, moreAlpha)
+        set.start()
+    }
+
+    /**
+     * 显示合并区域
+     */
+    private fun showMerge(during: Long = 300) {
+        towardsRight.visibility = View.VISIBLE
+        towardsLeft.visibility = View.GONE
+        val set = AnimatorSet()
+        val moreOut = ObjectAnimator.ofFloat(moreContainer, "translationX", 0f, width.toFloat()).apply { duration = during }
+        val moreAlpha = ObjectAnimator.ofFloat(moreContainer, "alpha", 1f, 0.8f).apply { duration = during }
+        val toolsIn = ObjectAnimator.ofFloat(toolsContainer, "translationX", 0 - width.toFloat(), 0f).apply { duration = during }
+        val toolsAlpha = ObjectAnimator.ofFloat(toolsContainer, "alpha", 0.8f, 1f).apply { duration = during }
+        val functionIn = ObjectAnimator.ofFloat(functionContainer, "translationX", 0 - width.toFloat(), 0f).apply { duration = during }
+        val functionAlpha = ObjectAnimator.ofFloat(functionContainer, "alpha", 0.8f, 1f).apply { duration = during }
+        set.playTogether(moreOut, moreAlpha, toolsIn, toolsAlpha, functionIn, functionAlpha)
+        set.start()
     }
 }

@@ -1,6 +1,8 @@
 package com.abelhu.travel.ui.main
 
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
@@ -25,8 +27,15 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
         return inflater.inflate(R.layout.view_travel, travelContainer, false)
     }
 
+    override fun moreView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View {
+        return View(context).apply { background = ColorDrawable(Color.LTGRAY) }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.tools_view, container, false).apply {
+            // 工具
+            toolsView = findViewById(R.id.toolsView)
+            toolsView.helper = this@Merge2Fragment
             // 旅行容器添加图片
             val near = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_near), 0f, 64.dp)
             val far = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_far), near.bitmap.height.toFloat(), 8.dp)
@@ -35,8 +44,8 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
                 background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
                 post { (background as CycleDrawable).start() }
             }
-            toolsView = findViewById(R.id.toolsView)
-            toolsView.helper = this@Merge2Fragment
+            // 显示切换按钮
+            findViewById<View>(R.id.towardsRight).visibility = View.VISIBLE
         }
     }
 
@@ -70,10 +79,6 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
     }
 
     override fun onToolApply(index: Int, tool: ToolBean) {
-        // 应用新动画
-//        travel.imageAssetsFolder = "lottie/walk/level_${tool.level}/images"
-//        travel.setAnimation("lottie/walk/level_${tool.level}/data.json")
-//        travel.playAnimation()
         // todo: 应用换装功能
         if (true) toolsView.onToolsApplySuccess(index, tool)
     }
