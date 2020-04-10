@@ -26,6 +26,24 @@ class GridLayoutDrawable(
         textAlign = Paint.Align.CENTER
     }
 
+    fun getItem(source: Bitmap): Bitmap {
+        // 容器背景
+        val bitmap = Bitmap.createBitmap(source)
+        val canvas = Canvas(bitmap)
+        // 绘制边框
+        RectF().apply {
+            left = padding
+            top = padding
+            right = left + itemWidth - padding * 2
+            bottom = top + itemHeight - padding * 2
+            canvas.drawRoundRect(this, radius, radius, paint)
+        }
+        // 绘制原图
+        canvas.drawBitmap(source, 0f, 0f, paint)
+        canvas.save()
+        return bitmap
+    }
+
     override fun draw(canvas: Canvas) {
         for (line in position) {
             for (topLeft in line) {

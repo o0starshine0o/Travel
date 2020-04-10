@@ -107,7 +107,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/speedupContainer"
                 app:layout_constraintStart_toEndOf="@+id/shopContainer"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="invisible">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="wrap_content"
@@ -163,15 +164,14 @@
                 app:layout_constraintEnd_toStartOf="@id/speedupContainer"
                 app:layout_constraintStart_toEndOf="@+id/shopContainer"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="invisible">
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/recycleImage"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="-40dp"
-                    android:src="@mipmap/ic_launcher_round"
-                    android:tint="@android:color/darker_gray"
+                    android:src="@mipmap/icon_garbage"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -184,7 +184,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/recycle_property"
-                    android:textColor="@android:color/white" />
+                    android:textColor="#686566" />
 
             </LinearLayout>
 

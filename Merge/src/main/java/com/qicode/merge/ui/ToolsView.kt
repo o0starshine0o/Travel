@@ -30,7 +30,7 @@ import java.text.DecimalFormat
 
 interface ToolsViewHelp {
     fun travelView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
-    fun moreView(inflater: LayoutInflater, travelContainer: ConstraintLayout): View
+    fun moreView(inflater: LayoutInflater, moreContainer: ConstraintLayout): View
     fun onSpeedUp()
     fun onShop()
     fun onToolAdd(tool: ToolBean?)
