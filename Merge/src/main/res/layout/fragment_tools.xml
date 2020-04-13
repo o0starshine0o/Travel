@@ -119,7 +119,7 @@
                         android:id="@+id/levelImage"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@mipmap/ic_launcher_round"
+                        tools:src="@mipmap/ic_launcher_round"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
