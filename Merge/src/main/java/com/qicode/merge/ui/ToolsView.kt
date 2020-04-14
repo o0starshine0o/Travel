@@ -62,6 +62,10 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
                 shakeQuickAdd()
             }
         }
+    /**
+     * 对应内容的View，可用于动态增加减少view
+     */
+    lateinit var contentView: ConstraintLayout
 
     private val beatAnimator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
     private val shakeAnimator = AnimatorInflater.loadAnimator(context, R.animator.shake)
@@ -81,6 +85,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
 
     init {
         addView(LayoutInflater.from(context).inflate(R.layout.tools_view_detail, this, false).apply {
+            contentView = this as ConstraintLayout
             toolsContainer.layoutManager = GridManager(3, 4) { position, itemWidth, itemHeight ->
                 // 再layoutManager完成item的计算后，设置toolsContainer的背景
                 val gray = Color.rgb(241, 239, 242)
