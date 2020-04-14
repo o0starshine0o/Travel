@@ -24,7 +24,7 @@ import com.qicode.merge.data.Tools
 import com.qicode.merge.data.ToolsOperateListener
 import com.qicode.merge.exception.NotEnoughPropertyError
 import com.qicode.merge.exception.NotEnoughSpaceError
-import kotlinx.android.synthetic.main.fragment_tools.view.*
+import kotlinx.android.synthetic.main.tools_view_detail.view.*
 import java.math.BigDecimal
 import java.text.DecimalFormat
 
@@ -80,7 +80,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         }
 
     init {
-        addView(LayoutInflater.from(context).inflate(R.layout.fragment_tools, this, false).apply {
+        addView(LayoutInflater.from(context).inflate(R.layout.tools_view_detail, this, false).apply {
             toolsContainer.layoutManager = GridManager(3, 4) { position, itemWidth, itemHeight ->
                 // 再layoutManager完成item的计算后，设置toolsContainer的背景
                 val gray = Color.rgb(241, 239, 242)
