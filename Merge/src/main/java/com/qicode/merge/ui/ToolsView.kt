@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.Handler
+import android.support.annotation.IntDef
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.util.Log
@@ -43,6 +44,14 @@ interface ToolsViewHelp {
 }
 
 class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context, set), ToolsOperateListener {
+    companion object {
+        private const val MERGE = 0
+        private const val MORE = 1
+    }
+
+    @IntDef(MERGE, MORE)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class Show
 
     var userTool: Tools? = null
         set(value) {
@@ -70,6 +79,13 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
     private val beatAnimator = AnimatorInflater.loadAnimator(context, R.animator.property_beat)
     private val shakeAnimator = AnimatorInflater.loadAnimator(context, R.animator.shake)
     private var travelView: View? = null
+    private var moreView: View? = null
+    /**
+     * 使用viewCode表示哪个view正在显示
+     */
+    @Show
+    private var viewCode = 0
+
     var helper: ToolsViewHelp? = null
         set(value) {
             field = value
@@ -79,9 +95,27 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
                 travelContainer.addView(travelView(LayoutInflater.from(context), travelContainer).apply { travelView = this }, travelParams)
                 // moreContainer添加一个的view
                 val moreParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                moreContainer.addView(moreView(LayoutInflater.from(context), moreContainer), moreParams)
+                moreContainer.addView(moreView(LayoutInflater.from(context), moreContainer).apply { moreView = this }, moreParams)
             }
         }
+
+    fun showChange() {
+        when (viewCode) {
+            MERGE -> {
+                towardsRight.visibility = View.VISIBLE
+                towardsLeft.visibility = View.GONE
+            }
+            MORE -> {
+                towardsRight.visibility = View.GONE
+                towardsLeft.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    fun hideChange() {
+        towardsRight.visibility = View.GONE
+        towardsLeft.visibility = View.GONE
+    }
 
     init {
         addView(LayoutInflater.from(context).inflate(R.layout.tools_view_detail, this, false).apply {
@@ -391,8 +425,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
      * 显示更多精彩
      */
     private fun showMore(during: Long = 300) {
-        towardsRight.visibility = View.GONE
-        towardsLeft.visibility = View.VISIBLE
+        showChange(MORE)
         moreContainer.visibility = View.VISIBLE
         val set = AnimatorSet()
         val toolsOut = ObjectAnimator.ofFloat(toolsContainer, "translationX", 0f, (0 - width).toFloat()).apply { duration = during }
@@ -409,8 +442,7 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
      * 显示合并区域
      */
     private fun showMerge(during: Long = 300) {
-        towardsRight.visibility = View.VISIBLE
-        towardsLeft.visibility = View.GONE
+        showChange(MERGE)
         val set = AnimatorSet()
         val moreOut = ObjectAnimator.ofFloat(moreContainer, "translationX", 0f, width.toFloat()).apply { duration = during }
         val moreAlpha = ObjectAnimator.ofFloat(moreContainer, "alpha", 1f, 0.8f).apply { duration = during }
@@ -420,5 +452,10 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
         val functionAlpha = ObjectAnimator.ofFloat(functionContainer, "alpha", 0.8f, 1f).apply { duration = during }
         set.playTogether(moreOut, moreAlpha, toolsIn, toolsAlpha, functionIn, functionAlpha)
         set.start()
+    }
+
+    private fun showChange(@Show code: Int) {
+        viewCode = code
+        showChange()
     }
 }
