@@ -37,9 +37,9 @@ class Merge2Fragment : Fragment(), ToolsViewHelp {
             toolsView = findViewById(R.id.toolsView)
             toolsView.helper = this@Merge2Fragment
             // 旅行容器添加图片
-            val near = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_near), 0f, 64.dp)
-            val far = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_far), near.bitmap.height.toFloat(), 8.dp)
-            val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), near.bitmap.height.toFloat(), 8.dp)
+            val near = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_near), 2f, 0f, 64.dp)
+            val far = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_far), 2f, near.bitmap.height.toFloat(), 8.dp)
+            val middle = CycleBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.bg_beijing_middle), 2f, near.bitmap.height.toFloat(), 8.dp)
             findViewById<View>(R.id.travelContainer).apply {
                 background = CycleDrawable(lifecycle).addImages(listOf(far, near, middle))
                 post { (background as CycleDrawable).start() }

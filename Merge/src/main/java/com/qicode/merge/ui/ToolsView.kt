@@ -91,7 +91,12 @@ class ToolsView(context: Context, set: AttributeSet) : ConstraintLayout(context,
             field = value
             value?.apply {
                 // travelContainer添加一个的view
-                val travelParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                val travelParams = LayoutParams(LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)).apply {
+                    topToTop = travelContainer.id
+                    bottomToBottom = travelContainer.id
+                    startToStart = travelContainer.id
+                    endToEnd = travelContainer.id
+                }
                 travelContainer.addView(travelView(LayoutInflater.from(context), travelContainer).apply { travelView = this }, travelParams)
                 // moreContainer添加一个的view
                 val moreParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
