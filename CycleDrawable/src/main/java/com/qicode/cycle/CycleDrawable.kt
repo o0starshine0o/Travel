@@ -74,13 +74,14 @@ class CycleDrawable(lifecycle: Lifecycle, private val minRefreshTime: Long = 33)
                 // 根据时间差和速率，计算出需要向左偏移的距离
                 val left = (current - startTime) * cycleBitmap.speed / 1000 % width
                 canvas.drawBitmap(this, 0 - left, top, paint)
-                // 需要在绘制一遍，保证图片的无限循环
-                if (left + bounds.width() > width) {
-                    canvas.drawBitmap(this, width - left, top, paint)
+                // 如果有剩余空间
+                var remain = bounds.width() - (width - left)
+                while (remain > 0) {
+                    canvas.drawBitmap(this, bounds.width() - remain, top, paint)
+                    remain -= width
                 }
             }
         }
-        Log.i(TAG(), "draw cycle drawable")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
